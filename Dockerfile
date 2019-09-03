@@ -2,6 +2,10 @@ FROM kthse/kth-nodejs:10.14.0
 
 MAINTAINER KTH Webb "cortina.developers@kth.se"
 
+#STUNNEL
+
+RUN apk --no-cache add stunnel
+
 RUN mkdir -p /npm && \
     mkdir -p /application
 

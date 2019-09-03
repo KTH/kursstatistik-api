@@ -12,6 +12,7 @@ if (nodeEnv === 'development' || nodeEnv === 'dev' || !nodeEnv) {
 
 const config = require('./server/configuration').server
 const server = require('./server/server')
+
 const log = require('kth-node-log')
 
 /* ****************************

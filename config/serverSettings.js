@@ -11,15 +11,13 @@ const { getEnv, unpackMongodbConfig, unpackApiKeysConfig, devDefaults } = requir
 const { safeGet } = require('safe-utils')
 
 // DEFAULT SETTINGS used for dev, if you want to override these for you local environment, use env-vars in .env
-const devPrefixPath = devDefaults('/api/node')
+const devPrefixPath = devDefaults('/api/kursstatistik')
 const devSsl = devDefaults(false)
 const devPort = devDefaults(3001)
-const devMongodb = devDefaults('mongodb://localhost:27017/node')
+const devMongodb = devDefaults('mongodb://localhost:27017/kursstatistik')
 
 // EXAMPLE: const devApiKeys = devDefaults('?name=devClient&apiKey=SET_YOUR_API_KEY&scope=write&scope=read')
 const devApiKeys = devDefaults('?name=devClient&apiKey=1234&scope=write&scope=read')
-
-// END DEFAULT SETTINGS
 
 module.exports = {
   // The proxy prefix path if the application is proxied. E.g /places
@@ -50,6 +48,11 @@ module.exports = {
       useAccessLog: safeGet(() => getEnv('LOGGING_ACCESS_LOG'), 'true') === 'true'
     }
   }
-
+  /* certs:{
+    ladok:{
+      cert: fs.readFileSync('./jeanetteskog@KTH.crt', 'utf8'),
+      certKey= fs.readFileSync('./jeanetteskog@KTH.key', 'utf8')
+    }
+  } */
   // Custom app settings
 }

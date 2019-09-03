@@ -39,57 +39,21 @@
         ]
       }
     },
-    "/v1/data/{id}": {
-      "get": {
-        "operationId": "getDataById",
-        "summary": "Get data",
-        "description": "Gets some form of data that only requires read access",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Id of data to get",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "v1"
-        ],
-        "responses": {
-          "200": {
-            "description": "The requested data",
-            "schema": {
-              "$ref": "#/definitions/Data"
-            }
-          },
-          "default": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        },
-        "security": [{
-          "api_key": [
-            "read"
-          ]
-        }]
-      },
+    "/v1/courseRoundStaitics/{roundEndDate}": {
       "post": {
-        "operationId": "postDataById",
+        "operationId": "requestRoundStatisticsByLadokId",
         "summary": "Saves an object in the database",
         "description": "Saves changes to an object in the database",
         "parameters": [
           {
-            "name": "id",
+            "name": "roundEndDate",
             "in": "path",
-            "description": "Id of the data to save",
+            "description": "End date of the roun(s) to get the correct result, format yyyy-mm-dd",
             "required": true,
             "type": "string"
           },
           {
-            "name": "data",
+            "name": "Ladok roundId list",
             "in": "body",
             "description": "The data to save",
             "required": true,
@@ -134,12 +98,9 @@
   "definitions": {
     "Data": {
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier representing some specific data"
-        },
-        "name": {
-          "type": "string",
+        "roundLadokIdList": {
+          "type": "array",
+          "items": "string",
           "description": "Description of the data"
         }
       }

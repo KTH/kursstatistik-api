@@ -29,6 +29,8 @@ node_modules/*
 
 # Docker
 *.env
+*.crt
+*.key
 
 # Generated with npm dependencies.
 
