@@ -1,0 +1,31 @@
+version: '3.5'
+#bump12345wet
+#
+# Docs: https://gita.sys.kth.se/Infosys/cellus-registry/blob/master/deploy/kth-azure-app/active/docker-stack.yml
+#
+
+
+
+services:
+  
+  api:
+    env_file:
+      - .env
+    environment:
+      API_VERSION: "^0.1.0"
+      SERVICE_PUBLISH: "/api/kursstatistik"
+      SERVER_HOST_URL: "http://localhost:3001/"
+      SERVER_PORT: 3001
+      NODE_ENV: "production"
+      
+      LOGGING_LEVEL: "INFO"
+      LOGGING_ACCESS_LOG : "true"
+      LOGGING_CLIENT_LEVEL : "debug"
+
+
+      NODE_ENV: 'development'
+
+    build: .
+
+    ports:
+      - 3001:3001

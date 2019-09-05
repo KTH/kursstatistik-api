@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@kth/ladok-api": "github:kth/ladok-api",
+    "bindings": "^1.5.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "component-registry": "^1.0.0-rc.8",

@@ -3,10 +3,11 @@
 /**
  * Sample API controller. Can safely be removed.
  */
-const Sample = require('../models').sample.Sample
 const log = require('kth-node-log')
 
-const ladokDB = require('../ladokDatabase')
+// const ladokDB = require('../ladokDatabase')
+// var bindings = require('bindings')('binding.node')
+console.log('Loading ibmdb')
 
 const ibmdb = require('ibm_db')
 
@@ -61,6 +62,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
             }
           }
         }
+        log.info('examinationInPeriod:', examinationInPeriod)
         responseObject.examinationGrade = (examinationInPeriod / data.length) * 100
         conn.close(function () {
           log.info('Ladok connection closed')

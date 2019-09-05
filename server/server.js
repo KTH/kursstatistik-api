@@ -83,7 +83,7 @@ server.use(passport.session())
  * ************************
  */
 // Just connect the database
-require('./database').connect()
+// require('./database').connect()
 
 /* **********************************
  * ******* APPLICATION ROUTES *******
