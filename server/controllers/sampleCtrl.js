@@ -50,7 +50,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
         }
         if (err) {
           console.log('err', err)
-          res.json({ err })
+          return res.json({ err })
         } else {
           responseObject.registeredStudents = data.length
           var examinationInPeriod = 0
