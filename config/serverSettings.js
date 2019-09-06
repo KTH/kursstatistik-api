@@ -34,10 +34,10 @@ module.exports = {
   },
 
   // API keys
-  api_keys: unpackApiKeysConfig('API_KEYS', devApiKeys),
+  api_keys: unpackApiKeysConfig('KURSSTATISTIK_API_KEYS', devApiKeys),
 
   // Services
-  db: unpackMongodbConfig('MONGODB_URI', devMongodb),
+  // db: unpackMongodbConfig('MONGODB_URI', devMongodb),
 
   // Logging
   logging: {
