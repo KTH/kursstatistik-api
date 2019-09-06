@@ -38,4 +38,5 @@ RUN chmod +x ./run.sh
 
 EXPOSE 3001
 
-CMD ["node", "app.js", "stunnel"]
+CMD ["./run.sh","node", "app.js"]
+
