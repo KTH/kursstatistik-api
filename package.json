@@ -13,7 +13,6 @@
     "start-dev": "cross-env NODE_ENV=development nodemon app.js"
   },
   "dependencies": {
-    "@kth/ladok-api": "github:kth/ladok-api",
     "bindings": "^1.5.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
@@ -23,7 +22,6 @@
     "express": "^4.16.4",
     "express-handlebars": "^3.0.2",
     "fs": "0.0.1-security",
-    "ibm_db": "^2.6.0",
     "kth-node-access-log": "github:KTH/kth-node-access-log#v1.0.0",
     "kth-node-api-common": "^0.1.5",
     "kth-node-api-key-strategy": "^1.0.6",

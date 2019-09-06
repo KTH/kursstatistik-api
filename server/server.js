@@ -9,7 +9,7 @@ if (nodeEnv === 'development' || nodeEnv === 'dev' || !nodeEnv) {
   // This is an ANSIBLE machine which doesn't set env-vars atm
   // so read localSettings.js which we now use to fake env-vars
   // because it already exists in our Ansible setup.
-  require('../config/localSettings')
+  // require('../config/localSettings')
 }
 // Now read the server config etc.
 const config = require('./configuration').server
