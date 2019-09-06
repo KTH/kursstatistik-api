@@ -1,8 +1,9 @@
 # Kursstatistik-api
 ## Project for course statistics from Ladok Uppföljningsdatabas using Stunnel
 
-Stunnel config:
+### Stunnel config
 
+```
 debug = 7
 foreground = yes
 [db2_ufhsk_Prod]
@@ -13,6 +14,7 @@ key = ./config/secrets/xxx.key
 verify = 4
 cert = ./config/secrets/xxx.crt
 CAfile = ./config/secrets/UF-prod-ca-bundle.txt
+```
 
 ### Add certificates and key to secrets
 
@@ -26,11 +28,15 @@ In secrets you need to set LADOK3_CERT, LADOK3_CERT_KEY, CA_FILE.
 
 Set the following variables in secrets.env for the database connection string:
 
+```
 LADOK3_USERNAME=xxxxx
 LADOK3_PASSWORD=xxxxx
 LADOK3_DATABASE=xxxx
 STUNNEL_HOST=localhost
+```
 
 The connection string looks like this:
 
+```
 DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=11000;PROTOCOL=TCPIP
+```
