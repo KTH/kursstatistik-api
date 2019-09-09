@@ -5,10 +5,6 @@
  */
 const log = require('kth-node-log')
 
-// const ladokDB = require('../ladokDatabase')
-// var bindings = require('bindings')('binding.node')
-console.log('Loading ibmdb')
-
 const ibmdb = require('ibm_db')
 
 module.exports = {
@@ -18,11 +14,17 @@ module.exports = {
 async function _requestRoundStatisticsByLadokId (req, res, next) {
   var endDate = req.params.roundEndDate
   var ladokRoundIdList = req.body
+  if (endDate.length === 0) {
+    log.info('Empty roundEndDate: not OK')
+    return res.status(406).json({ message: 'roundEndDate can not be empty' })
+  }
+
   if (ladokRoundIdList.length === 0) {
-    log.info('Empty ladokUID list in body')
+    log.info('Empty ladokUID list in body is okay though ladokUID can be missuíng in kopps, returning empty response ')
     return res.status(204).json({ registeredStudents: '', examinationGrade: '' })
   }
 
+  /* ---- Building SQL query ---- */
   let formattedUID = ''
   let SQLFirstPartQuery = 'SELECT EXAMINATIONSDATUM_KURS, KURS_AVKLARAD_INOM_PERIOD, UTBILDNING_KOD FROM  UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE  OMREGISTRERAD_INOM_PERIOD=0  AND REGISTRERAD_INOM_PERIOD=1'
   log.info('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
@@ -33,41 +35,41 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
       formattedUID += " OR UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
     }
   }
-  SQLFirstPartQuery = SQLFirstPartQuery + formattedUID + ')'
-  console.log(SQLFirstPartQuery, req.body)
+  const SQLquery = SQLFirstPartQuery + formattedUID + ')'
 
   try {
-    ibmdb.open(`DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=11000;PROTOCOL=TCPIP`, async function (err, conn) {
+    const connectionString = `DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=${process.env.STUNNEL_PORT};PROTOCOL=TCPIP`
+    ibmdb.open(connectionString, async function (err, conn) {
       if (err) {
         log.info('Error in connection to ladok uppföljningsdatabas' + err)
         res.status(400).json({ err })
       }
 
-      await conn.query(SQLFirstPartQuery, function (err, data) {
+      await conn.query(SQLquery, function (err, data) {
+        if (err) {
+          log.error('err', err)
+          return res.json({ err })
+        }
+        log.info('Connected to Ladok uppföljningsdatabas')
         let responseObject = {
           registeredStudents: '',
           examinationGrade: ''
         }
-        if (err) {
-          console.log('err', err)
-          return res.json({ err })
-        } else {
-          responseObject.registeredStudents = data.length
-          var examinationInPeriod = 0
-          // console.log('Reg sudents', data.length)
-          for (let index = 0; index < data.length; index++) {
-            if (data[index].KURS_AVKLARAD_INOM_PERIOD === 1 && data[index].EXAMINATIONSDATUM_KURS <= endDate) {
-              examinationInPeriod++
-              // console.log(data[index], examinationInPeriod)
-            }
+        responseObject.registeredStudents = data.length
+        var examinationInPeriod = 0
+
+        for (let index = 0; index < data.length; index++) {
+          if (data[index].KURS_AVKLARAD_INOM_PERIOD === 1 && data[index].EXAMINATIONSDATUM_KURS <= endDate) {
+            examinationInPeriod++
           }
         }
-        log.info('examinationInPeriod:', examinationInPeriod)
+
+        log.info('result for number of examination in period:', examinationInPeriod)
         responseObject.examinationGrade = (examinationInPeriod / data.length) * 100
         conn.close(function () {
           log.info('Ladok connection closed')
         })
-        log.info('Response from _requestRoundStatisticsByLadokId', responseObject)
+        log.info('Sending response from _requestRoundStatisticsByLadokId', responseObject)
         res.json({ responseObject })
       })
     })
