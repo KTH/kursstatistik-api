@@ -26,7 +26,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
 
   /* ---- Building SQL query ---- */
   let formattedUID = ''
-  let SQLFirstPartQuery = 'SELECT EXAMINATIONSDATUM_KURS, KURS_AVKLARAD_INOM_PERIOD, UTBILDNING_KOD FROM  UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE  OMREGISTRERAD_INOM_PERIOD=0  AND REGISTRERAD_INOM_PERIOD=1'
+  let SQLFirstPartQuery = 'SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, KURS_AVKLARAD_INOM_PERIOD, UTBILDNING_KOD FROM  UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE  OMREGISTRERAD_INOM_PERIOD=0  AND REGISTRERAD_INOM_PERIOD=1'
   log.info('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
   for (let index = 0; index < ladokRoundIdList.length; index++) {
     if (index === 0) {

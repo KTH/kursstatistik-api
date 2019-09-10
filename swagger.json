@@ -55,11 +55,14 @@
           {
             "name": "Ladok roundId list",
             "in": "body",
-            "description": "The data to save",
+            "description": "List of ladok round ids",
             "required": true,
+            "type": "array",
+            "items": "string",
             "schema": {
-              "$ref": "#/definitions/Data"
+              "$ref": "LadokId,LadokId,...."
             }
+           
           }
         ],
         "tags": [
@@ -67,9 +70,12 @@
         ],
         "responses": {
           "200": {
-            "description": "A successful save"
+            "description": "A successful save",
+            "schema": {
+              "$ref": "#/definitions/ReturnObject"
+            }
           },
-          "default": {
+          "400": {
             "description": "Unexpected error",
             "schema": {
               "$ref": "#/definitions/Error"
@@ -96,12 +102,15 @@
     }
   },
   "definitions": {
-    "Data": {
+    "ReturnObject": {
       "properties": {
-        "roundLadokIdList": {
-          "type": "array",
-          "items": "string",
-          "description": "Description of the data"
+        "registeredStudents": {
+          "type": "string",
+          "description": "Sum of first time registered students for round(s)"
+        },
+        "examinationGrade": {
+          "type": "string",
+          "description": "Percentage of registeredStudents and sutents that has finnish the course before course end date"
         }
       }
     },
@@ -112,9 +121,6 @@
           "format": "int32"
         },
         "message": {
-          "type": "string"
-        },
-        "fields": {
           "type": "string"
         }
       }
