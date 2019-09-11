@@ -21,7 +21,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
 
   if (ladokRoundIdList.length === 0) {
     log.info('Empty ladokUID list in body is okay though ladokUID can be missuíng in kopps, returning empty response ')
-    return res.status(204).json({ registeredStudents: '', examinationGrade: '' })
+    return res.status(204).json({ registeredStudents: -1, examinationGrade: -1 })
   }
 
   /* ---- Building SQL query ---- */
