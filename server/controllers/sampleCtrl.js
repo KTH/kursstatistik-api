@@ -25,9 +25,20 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
   }
 
   /* ---- Building SQL query ---- */
+  const reRegistered = 0
+  const registeredInPeriod = 1
+  const periodInOrder = 1
   let formattedUID = ''
-  let SQLFirstPartQuery = 'SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, KURS_AVKLARAD_INOM_PERIOD, UTBILDNING_KOD FROM  UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE  OMREGISTRERAD_INOM_PERIOD=0  AND REGISTRERAD_INOM_PERIOD=1'
+
+  let sqlFirstPartQuery = `
+  SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+  FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+  WHERE OMREGISTRERAD_INOM_PERIOD = ${reRegistered}
+    AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
+    AND PERIOD_I_ORDNING = ${periodInOrder}
+  `
   log.info('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
+
   for (let index = 0; index < ladokRoundIdList.length; index++) {
     if (index === 0) {
       formattedUID += " AND ( UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
@@ -35,7 +46,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
       formattedUID += " OR UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
     }
   }
-  const SQLquery = SQLFirstPartQuery + formattedUID + ')'
+  const SQLquery = sqlFirstPartQuery + formattedUID + ')'
 
   try {
     const connectionString = `DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=${process.env.STUNNEL_PORT};PROTOCOL=TCPIP`
@@ -59,7 +70,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
         var examinationInPeriod = 0
 
         for (let index = 0; index < data.length; index++) {
-          if (data[index].KURS_AVKLARAD_INOM_PERIOD === 1 && data[index].EXAMINATIONSDATUM_KURS <= endDate) {
+          if (data[index].EXAMINATIONSDATUM_KURS <= endDate) {
             examinationInPeriod++
           }
         }
