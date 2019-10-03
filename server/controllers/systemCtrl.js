@@ -49,10 +49,6 @@ function getAbout (req, res) {
  * Monitor page
  */
 function getMonitor (req, res) {
-  // Check MongoDB
-  const mongodbHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-mongodb')
-  const subSystems = [mongodbHealthUtil.status(db, { required: true })]
-
   // If we need local system checks, such as memory or disk, we would add it here.
   // Make sure it returns a promise which resolves with an object containing:
   // {statusCode: ###, message: '...'}
@@ -64,7 +60,7 @@ function getMonitor (req, res) {
   // Determine system health based on the results of the checks above. Expects
   // arrays of promises as input. This returns a promise
   const systemHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-system-check')
-  const systemStatus = systemHealthUtil.status(localSystems, subSystems)
+  const systemStatus = systemHealthUtil.status(localSystems)
 
   systemStatus.then((status) => {
     // Return the result either as JSON or text
