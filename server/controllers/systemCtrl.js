@@ -7,6 +7,7 @@ const db = require('kth-node-mongo')
 const Promise = require('bluebird')
 const registry = require('component-registry').globalRegistry
 const { IHealthCheck } = require('kth-node-monitor').interfaces
+const exec = require('child_process').exec
 
 /**
  * System controller for functions such as about and monitor.
@@ -49,11 +50,25 @@ function getAbout (req, res) {
  * Monitor page
  */
 function getMonitor (req, res) {
+  const stunnelStatus = new Promise((resolve, reject) => {
+    exec('ps aux | grep "[s]tunnel"', (error, stdout, stderr) => {
+      let message = 'OK'
+      let statusCode = 200
+      if (stderr) {
+        message = 'ERROR Stunnel status check failed'
+        statusCode = 500
+      } else if (error || !stdout) {
+        message = 'ERROR Stunnel has stopped'
+      }
+      resolve({ statusCode, message })
+    })
+  })
+
   // If we need local system checks, such as memory or disk, we would add it here.
   // Make sure it returns a promise which resolves with an object containing:
   // {statusCode: ###, message: '...'}
   // The property statusCode should be standard HTTP status codes.
-  const localSystems = Promise.resolve({ statusCode: 200, message: 'OK' })
+  const localSystems = stunnelStatus
 
   /* -- You will normally not change anything below this line -- */
 
