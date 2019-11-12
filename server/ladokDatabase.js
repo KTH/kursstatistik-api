@@ -14,14 +14,13 @@ async function _fetchRoundStatistics (roundIdList) {
 
     await conn.query(firstQ, function (err, data) {
       if (err) {
-        console.log('err', err)
+        log.error('Failed to _fetchRoundStatistics, error:', { err })
       } else {
-        console.log('Reg sudents', data.length)
-        // for (let index = 0; index < data.length; index++) { console.log(data[index]) }
+        log.error('Failed to _fetchRoundStatistics, error:', { err })
       }
 
       conn.close(function () {
-        console.log('done')
+        log.debug('Closed connection to Ladok database')
       })
       return data
     })

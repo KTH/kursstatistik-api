@@ -15,12 +15,12 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
   var endDate = req.params.roundEndDate
   var ladokRoundIdList = req.body
   if (endDate.length === 0) {
-    log.info('Empty roundEndDate: not OK')
+    log.debug('Empty roundEndDate: not OK')
     return res.status(406).json({ message: 'roundEndDate can not be empty' })
   }
 
   if (ladokRoundIdList.length === 0) {
-    log.info('Empty ladokUID list in body is okay though ladokUID can be missuíng in kopps, returning empty response ')
+    log.debug('Empty ladokUID list in body is okay though ladokUID can be missuíng in kopps, returning empty response ')
     return res.status(204).json({ registeredStudents: -1, examinationGrade: -1 })
   }
 
@@ -37,7 +37,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
     AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
     AND PERIOD_I_ORDNING = ${periodInOrder}
   `
-  log.info('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
+  log.debug('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
 
   for (let index = 0; index < ladokRoundIdList.length; index++) {
     if (index === 0) {
@@ -52,7 +52,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
     const connectionString = `DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=${process.env.STUNNEL_PORT};PROTOCOL=TCPIP`
     ibmdb.open(connectionString, async function (err, conn) {
       if (err) {
-        log.info('Error in connection to ladok uppföljningsdatabas' + err)
+        log.debug('Error in connection to ladok uppföljningsdatabas' + err)
         res.status(400).json({ err })
       }
 
@@ -61,7 +61,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
           log.error('err', err)
           return res.json({ err })
         }
-        log.info('Connected to Ladok uppföljningsdatabas')
+        log.debug('Connected to Ladok uppföljningsdatabas')
         let responseObject = {
           registeredStudents: '',
           examinationGrade: ''
@@ -75,12 +75,12 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
           }
         }
 
-        log.info('result for number of examination in period:', examinationInPeriod)
+        log.debug('result for number of examination in period:', examinationInPeriod)
         responseObject.examinationGrade = (examinationInPeriod / data.length) * 100
         conn.close(function () {
-          log.info('Ladok connection closed')
+          log.debug('Ladok connection closed')
         })
-        log.info('Sending response from _requestRoundStatisticsByLadokId', responseObject)
+        log.debug('Sending response from _requestRoundStatisticsByLadokId', responseObject)
         res.json({ responseObject })
       })
     })
