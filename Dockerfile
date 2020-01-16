@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apt-get update
+RUN apt-get update --fix-missing
     #apt-get upgrade && \
 RUN apt-get -y install python make g++ python2.7 libxml2 openssl stunnel 
    # rm -rf /var/cache/apt-get/*
