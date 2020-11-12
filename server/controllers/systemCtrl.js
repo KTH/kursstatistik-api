@@ -2,7 +2,6 @@
 
 const packageFile = require('../../package.json')
 const getPaths = require('kth-node-express-routing').getPaths
-const db = require('kth-node-mongo')
 
 const Promise = require('bluebird')
 const registry = require('component-registry').globalRegistry
@@ -19,14 +18,14 @@ module.exports = {
   robotsTxt: getRobotsTxt,
   paths: getPathsHandler,
   checkAPIKey: checkAPIKey,
-  swagger: getSwagger
+  swagger: getSwagger,
 }
 
 /**
  * GET /swagger.json
  * Swagger config
  */
-function getSwagger (req, res) {
+function getSwagger(req, res) {
   res.json(require('../../swagger.json'))
 }
 
@@ -34,14 +33,14 @@ function getSwagger (req, res) {
  * GET /_about
  * About page
  */
-function getAbout (req, res) {
+function getAbout(req, res) {
   const paths = getPaths()
   res.render('system/about', {
     appName: packageFile.name,
     appVersion: packageFile.version,
     appDescription: packageFile.description,
     monitorUri: paths.system.monitor.uri,
-    robotsUri: paths.system.robots.uri
+    robotsUri: paths.system.robots.uri,
   })
 }
 
@@ -49,7 +48,7 @@ function getAbout (req, res) {
  * GET /_monitor
  * Monitor page
  */
-function getMonitor (req, res) {
+function getMonitor(req, res) {
   const stunnelStatus = new Promise((resolve, reject) => {
     exec('ps aux | grep "[s]tunnel"', (error, stdout, stderr) => {
       let message = 'OK'
@@ -77,25 +76,27 @@ function getMonitor (req, res) {
   const systemHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-system-check')
   const systemStatus = systemHealthUtil.status(localSystems)
 
-  systemStatus.then((status) => {
-    // Return the result either as JSON or text
-    if (req.headers['accept'] === 'application/json') {
-      let outp = systemHealthUtil.renderJSON(status)
-      res.status(status.statusCode).json(outp)
-    } else {
-      let outp = systemHealthUtil.renderText(status)
-      res.type('text').status(status.statusCode).send(outp)
-    }
-  }).catch((err) => {
-    res.type('text').status(500).send(err)
-  })
+  systemStatus
+    .then(status => {
+      // Return the result either as JSON or text
+      if (req.headers['accept'] === 'application/json') {
+        let outp = systemHealthUtil.renderJSON(status)
+        res.status(status.statusCode).json(outp)
+      } else {
+        let outp = systemHealthUtil.renderText(status)
+        res.type('text').status(status.statusCode).send(outp)
+      }
+    })
+    .catch(err => {
+      res.type('text').status(500).send(err)
+    })
 }
 
 /**
  * GET /robots.txt
  * Robots.txt page
  */
-function getRobotsTxt (req, res) {
+function getRobotsTxt(req, res) {
   res.type('text').render('system/robots')
 }
 
@@ -103,10 +104,10 @@ function getRobotsTxt (req, res) {
  * GET /_paths
  * Return all paths for the system
  */
-function getPathsHandler (req, res) {
+function getPathsHandler(req, res) {
   res.json(getPaths())
 }
 
-function checkAPIKey (req, res) {
+function checkAPIKey(req, res) {
   res.end()
 }
