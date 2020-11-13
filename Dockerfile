@@ -1,8 +1,8 @@
 FROM ubuntu:latest
 
+ENV TZ=Europe/Stockholm
 RUN apt-get update
 RUN apt-get -y install python make g++ python2.7 libxml2 openssl stunnel curl git
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
