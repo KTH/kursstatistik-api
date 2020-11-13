@@ -1,7 +1,9 @@
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get -y install python make g++ python2.7 libxml2 openssl stunnel curl
+RUN apt-get -y install python make g++ python2.7 libxml2 openssl stunnel curl git
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
@@ -11,20 +13,17 @@ WORKDIR /npm
 
 COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
+
 RUN npm install --global node-gyp
-RUN apt-get -y install git
 RUN npm install --production
 RUN npm install --unsafe-perm ibm_db
-
 
 WORKDIR /application
 RUN cp -a /npm/node_modules /application && \
     rm -rf /npm
 
 COPY ["config", "config"]
-
 COPY ["package.json", "package.json"]
-
 COPY ["app.js", "app.js"]
 COPY ["swagger.json", "swagger.json"]
 COPY ["server", "server"]
@@ -35,4 +34,3 @@ RUN chmod +x ./run.sh
 EXPOSE 3001
 
 CMD ["./run.sh","node", "app.js"]
-
