@@ -126,7 +126,7 @@ addPaths(
 const authByApiKey = passport.authenticate('apikey', { session: false })
 
 // Application specific API enpoints
-const { Sample } = require('./controllers')
+const { Statistics } = require('./controllers')
 const { ApiRouter } = require('kth-node-express-routing')
 
 const apiRoute = ApiRouter(authByApiKey)
@@ -135,7 +135,7 @@ const paths = getPaths()
 // Api enpoints
 apiRoute.register(paths.api.checkAPIkey, System.checkAPIKey)
 
-apiRoute.register(paths.api.requestRoundStatisticsByLadokId, Sample.requestRoundStatisticsByLadokId)
+apiRoute.register(paths.api.requestRoundStatisticsByLadokId, Statistics.requestRoundStatisticsByLadokId)
 server.use('/', apiRoute.getRouter())
 
 // Catch not found and errors

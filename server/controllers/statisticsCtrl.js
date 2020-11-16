@@ -1,17 +1,14 @@
 'use strict'
 
-/**
- * Sample API controller. Can safely be removed.
- */
 const log = require('kth-node-log')
 
 const ibmdb = require('ibm_db')
 
 module.exports = {
-  requestRoundStatisticsByLadokId: _requestRoundStatisticsByLadokId
+  requestRoundStatisticsByLadokId: _requestRoundStatisticsByLadokId,
 }
 
-async function _requestRoundStatisticsByLadokId (req, res, next) {
+async function _requestRoundStatisticsByLadokId(req, res, next) {
   var endDate = req.params.roundEndDate
   var ladokRoundIdList = req.body
   if (endDate.length === 0) {
@@ -64,7 +61,7 @@ async function _requestRoundStatisticsByLadokId (req, res, next) {
         log.debug('Connected to Ladok uppföljningsdatabas')
         let responseObject = {
           registeredStudents: '',
-          examinationGrade: ''
+          examinationGrade: '',
         }
         responseObject.registeredStudents = data.length
         var examinationInPeriod = 0
