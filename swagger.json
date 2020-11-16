@@ -6,9 +6,7 @@
     "version": "1.0.0"
   },
   "basePath": "/api/kursstatistik",
-  "produces": [
-    "application/json"
-  ],
+  "produces": ["application/json"],
   "paths": {
     "/_checkAPIkey": {
       "get": {
@@ -16,9 +14,7 @@
         "summary": "GET a test endpoint that is protected by api key to validate that consumer has a proper api key",
         "description": "",
         "parameters": [],
-        "tags": [
-          "system"
-        ],
+        "tags": ["system"],
         "responses": {
           "200": {
             "description": "An empty response"
@@ -32,9 +28,7 @@
         },
         "security": [
           {
-            "api_key": [
-              "read"
-            ]
+            "api_key": ["read"]
           }
         ]
       }
@@ -58,16 +52,10 @@
             "description": "List of ladok round ids",
             "required": true,
             "type": "array",
-            "items": "string",
-            "schema": {
-              "$ref": "LadokId,LadokId,...."
-            }
-           
+            "items": { "type": "string" }
           }
         ],
-        "tags": [
-          "v1"
-        ],
+        "tags": ["v1"],
         "responses": {
           "200": {
             "description": "A successful save",
@@ -82,11 +70,11 @@
             }
           }
         },
-        "security": [{
-          "api_key": [
-            "write"
-          ]
-        }]
+        "security": [
+          {
+            "api_key": ["write"]
+          }
+        ]
       }
     }
   },
