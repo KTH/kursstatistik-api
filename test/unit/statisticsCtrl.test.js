@@ -54,7 +54,8 @@ describe('Test functions of statisticsCtrl.js', () => {
     jest.resetModules()
     jest.clearAllMocks()
   })
-  test('requestRoundStatisticsByLadokId', async done => {
+
+  test('path requestRoundStatisticsByLadokId responds', async done => {
     const ladokRoundId = 'bf42101f-5a3f-40d6-b48f-c14a0b0b43f2'
     const ladokRoundIds = [ladokRoundId]
     const roundEndDate = '2019-12-31'
