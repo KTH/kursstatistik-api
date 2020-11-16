@@ -100,4 +100,6 @@ async function requestRoundStatisticsByLadokId(req, res) {
 
 module.exports = {
   requestRoundStatisticsByLadokId,
+  createQueryString,
+  createQueryCallback,
 }
