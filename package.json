@@ -9,8 +9,7 @@
     "test": "NODE_ENV=test jest test/unit/*.js",
     "test:watch": "NODE_ENV=test jest test/unit/*.js --watch",
     "start": "NODE_ENV=production node app.js",
-    "start-dev": "cross-env NODE_ENV=development nodemon app.js",
-    "docker": "npm audit fix && npm install --production --no-optional && npm install --unsafe-perm ibm_db"
+    "start-dev": "cross-env NODE_ENV=development nodemon app.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
