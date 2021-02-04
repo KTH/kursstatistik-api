@@ -1,4 +1,5 @@
 FROM ubuntu:latest
+LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Stockholm
