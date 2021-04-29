@@ -6,6 +6,7 @@
   "main": "app.js",
   "private": true,
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "test": "NODE_ENV=test jest test/unit/*.js",
     "test:watch": "NODE_ENV=test jest test/unit/*.js --watch",
     "test:docker:unit": "ID=$(docker build -q .) && LOCAL_IMAGE_ID=$ID docker-compose -f docker-compose-unit-tests.yml up --build --abort-on-container-exit --always-recreate-deps --force-recreate",
@@ -50,6 +51,9 @@
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1"
+  },
+  "resolutions": {
+    "node-notifier": ">=8.0.1"
   },
   "engines": {
     "node": "12.0.0"
