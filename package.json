@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
+    "prepare": "husky install",
     "test": "NODE_ENV=test jest test/unit/*.js",
     "test:watch": "NODE_ENV=test jest test/unit/*.js --watch",
     "test:docker:unit": "ID=$(docker build -q .) && LOCAL_IMAGE_ID=$ID docker-compose -f docker-compose-unit-tests.yml up --build --abort-on-container-exit --always-recreate-deps --force-recreate",
@@ -46,7 +47,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^4.3.8",
+    "husky": "^7.0.1",
     "ibm_db": "^2.7.4",
     "jest": "^27.0.6",
     "nodemon": "^2.0.9",
@@ -65,11 +66,5 @@
     "singleQuote": true,
     "printWidth": 120,
     "arrowParens": "avoid"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run test",
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }
