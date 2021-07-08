@@ -55,7 +55,7 @@ describe('Test functions of statisticsCtrl.js', () => {
     jest.clearAllMocks()
   })
 
-  test('path requestRoundStatisticsByLadokId responds', async done => {
+  test('path requestRoundStatisticsByLadokId responds', async () => {
     const ladokRoundId = 'bf42101f-5a3f-40d6-b48f-c14a0b0b43f2'
     const ladokRoundIds = [ladokRoundId]
     const roundEndDate = '2019-12-31'
@@ -66,10 +66,9 @@ describe('Test functions of statisticsCtrl.js', () => {
 
     const response = await requestRoundStatisticsByLadokId(req, res)
     expect(res.json).toHaveBeenCalledTimes(1)
-    done()
   })
 
-  test('creates SQL query string with single round id', async done => {
+  test('creates SQL query string with single round id', async () => {
     const ladokRoundId = 'bf42101f-5a3f-40d6-b48f-c14a0b0b43f2'
     const ladokRoundIds = [ladokRoundId]
     const roundEndDate = '2019-12-31'
@@ -84,10 +83,9 @@ describe('Test functions of statisticsCtrl.js', () => {
     const { createQueryString } = require('../../server/controllers/statisticsCtrl')
     const queryString = createQueryString(roundEndDate, ladokRoundIds)
     expect(queryString).toBe(expectedQueryString)
-    done()
   })
 
-  test('creates SQL query string with multiple round ids', async done => {
+  test('creates SQL query string with multiple round ids', async () => {
     const ladokRoundId_1 = 'bf42101f-5a3f-40d6-b48f-c14a0b0b43f2'
     const ladokRoundId_2 = '33559e6c-5625-4259-8b45-a985860e07b1'
     const ladokRoundIds = [ladokRoundId_1, ladokRoundId_2]
@@ -103,10 +101,9 @@ describe('Test functions of statisticsCtrl.js', () => {
     const { createQueryString } = require('../../server/controllers/statisticsCtrl')
     const queryString = createQueryString(roundEndDate, ladokRoundIds)
     expect(queryString).toBe(expectedQueryString)
-    done()
   })
 
-  test('calculates registered students and examination grade', async done => {
+  test('calculates registered students and examination grade', async () => {
     const { createQueryCallback } = require('../../server/controllers/statisticsCtrl')
     let queryCallbackResponse = {}
     const expectedResponseObject = { registeredStudents: 2, examinationGrade: 50 }
@@ -135,6 +132,5 @@ describe('Test functions of statisticsCtrl.js', () => {
     const queryCallback = createQueryCallback(res, conn, roundEndDate)
     const response = queryCallback(undefined, ladokResponseData)
     expect(queryCallbackResponse.responseObject).toEqual(expectedResponseObject)
-    done()
   })
 })
