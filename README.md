@@ -33,11 +33,11 @@ $ brew install stunnel
 
 After ordering a certificate from Ladok, you will also receive an email with instructions on how to configure _Stunnel_. Below is a modified set of instructions and suggested configuration.
 
-You may, or may not, choose to use a _config_ folder. These instructions assume that all files are in ```/usr/local/etc/stunnel```, simply called the _stunnel folder_,
+You may, or may not, choose to use a _config_ folder. These instructions assume that all files are in `/usr/local/etc/stunnel`, simply called the _stunnel folder_,
 
-1. Save the certificate chain file, e.g. ```UF-prod-ca-bundle.txt```, to the stunnel folder.
+1. Save the certificate chain file, e.g. `UF-prod-ca-bundle.txt`, to the stunnel folder.
 2. Move the private key file and the client certificate file to the stunnel folder.
-3. Change the _stunnel config file_, ```stunnel.conf``` to:
+3. Change the _stunnel config file_, `stunnel.conf` to:
 
 ```sh
 debug = 7
@@ -45,7 +45,7 @@ foreground = yes
 [db2_ufhsk_Prod]
 client = yes
 accept = localhost:11000
-connect = ufhsk.ladok.se:2345
+connect = kth.ufhsk.ladok.se:2345
 key = [user name]@KTH.pem
 verify = 2
 cert = [user name]@KTH.crt
@@ -64,6 +64,7 @@ _TODO: Add instructions to run Stunnel in any folder._
 #### Troubleshooting
 
 If localhost port 11000 is already in use:
+
 ```sh
 # Find out which service that uses port 11000
 $ lsof -nP -i4TCP:11000 | grep LISTEN
