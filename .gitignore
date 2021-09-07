@@ -38,3 +38,6 @@ node_modules/*
 
 # test coverage
 coverage
+
+# developer notes
+NOTES.md
