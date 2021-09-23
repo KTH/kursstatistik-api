@@ -54,9 +54,9 @@ foreground = yes
 client = yes
 accept = localhost:11000
 connect = kth.ufhsk.ladok.se:2345
-key = [user name]@KTH.pem
+key = kursstatistik-api@KTH.pem
 verify = 2
-cert = [user name]@KTH.crt
+cert = kursstatistik-api@KTH.crt
 CAfile = [certificate chain file]
 ```
 
