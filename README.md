@@ -1,24 +1,32 @@
 # Kursstatistik-api
 
-Project for course statistics from _Ladok Uppföljningsdatabas_ using _[Stunnel](https://www.stunnel.org)_.
+Micro service for course statistics from _Ladok Uppföljningsdatabas_ using _[Stunnel](https://www.stunnel.org)_.
 
-## Stunnel
+## Setup in Azure
 
-### Development Setup on macOS
+### Stunnel
+
+#### Add or Change Certificate from Ladok
+ 
+See document _Certifikat för uppföljningsdatabasen i kursstatistik-api_ in Confluence.
+
+## Development Setup on macOS
+
+### Stunnel
 
 #### Add Certificate from Ladok
 
-After ordering a certificate from Ladok, you will receive an email with instructions. Follow these instructions and download certficate (PFX file) and password (copy from webpage). The email might also include instructions on how to extract key and client certificate. Below is a modified set of instructions (based in [this post](http://sharepointoscar.com/2017-03-16-extract-key-from-pfx/)). Extract key and certificate in a suitable folder.
+After ordering a certificate from Ladok, you will receive an email with instructions. Follow these instructions and download certficate (PFX file) and password files. The email might also include instructions on how to extract key and client certificate. Below is a modified set of instructions (based in [this post](http://sharepointoscar.com/2017-03-16-extract-key-from-pfx/)). The modification is necessary so that the password to the key can be removed later (this modification might not be necessary with an improved Stunnel configuration.) Extract key and certificate in a suitable folder.
 
 ```sh
 # Extract private key from PFX file
-$ openssl pkcs12 -in [certificate file name].pfx -nocerts -out [user name]@KTH.pem -nodes
+$ openssl pkcs12 -in [certificate file name].pfx -nocerts -out kursstatistik-api@KTH.pem -nodes
 
 # Set secure file permissions on private key file
-$ chmod 400 [user name]@KTH.pem
+$ chmod 400 kursstatistik-api@KTH.pem
 
 # Extract client certificate from PFX file
-$ openssl pkcs12 -in [certificate file name].pfx -out [user name]@KTH.crt -clcerts -nokeys
+$ openssl pkcs12 -in [certificate file name].pfx -out kursstatistik-api@KTH.crt -clcerts -nokeys
 ```
 
 #### Install Stunnel
@@ -31,7 +39,7 @@ $ brew install stunnel
 
 #### Configure Stunnel
 
-After ordering a certificate from Ladok, you will also receive an email with instructions on how to configure _Stunnel_. Below is a modified set of instructions and suggested configuration.
+After ordering a certificate from Ladok, you will also receive an email with instructions on how to configure _Stunnel_. Below is a modified set of instructions and suggested configuration. A certificate chain file will also be attached to the email.
 
 You may, or may not, choose to use a _config_ folder. These instructions assume that all files are in `/usr/local/etc/stunnel`, simply called the _stunnel folder_,
 
@@ -75,22 +83,14 @@ $ lsof -nP -i4TCP:11000 | grep LISTEN
 $ kill 6850
 ```
 
-### Add certificates and key to secrets
+## Data base connection string using ibm_db
 
-In secrets you need to set LADOK3_CERT, LADOK3_CERT_KEY, CA_FILE.
-
-1. Remove password from private key with command <code>openssl rsa -in encrypted_key.pem -out decrypted_key.pem</code>.
-2. Run base64 -i <name.pfx> -o <name.pfx.64> for cert, key and CAfile in your terminal.
-3. Copy the content in the three name.pfx.64 - files and past them in the secrets.env.
-
-### Data base connection string using ibm_db
-
-Set the following variables in secrets.env for the database connection string:
+Database connection details will also be included in the emails sent from Ladok. Set the following variables in .env for the database connection string:
 
 ```sh
 LADOK3_USERNAME=xxxxx
 LADOK3_PASSWORD=xxxxx
-LADOK3_DATABASE=xxxx
+LADOK3_DATABASE=xxxxx
 STUNNEL_HOST=localhost
 ```
 
