@@ -83,7 +83,7 @@ $ lsof -nP -i4TCP:11000 | grep LISTEN
 $ kill 6850
 ```
 
-## Data base connection string using ibm_db
+## Database Connection String Using ibm_db
 
 Database connection details will also be included in the emails sent from Ladok. Set the following variables in .env for the database connection string:
 
@@ -99,3 +99,7 @@ The connection string looks like this:
 ```sh
 DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=11000;PROTOCOL=TCPIP
 ```
+
+## Test
+
+Test data is available in document _KIP - Testdata - Förstagångsregistrerade och examinationsgrad.xlsx_.
