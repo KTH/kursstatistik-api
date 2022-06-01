@@ -1,6 +1,6 @@
 'use strict'
 
-const log = require('kth-node-log')
+const log = require('@kth/log')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const ibmdb = require('ibm_db')

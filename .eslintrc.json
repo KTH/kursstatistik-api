@@ -1,21 +1,28 @@
 {
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2018,
-    "ecmaFeatures": {
-      "classes": true,
-      "impliedStrict": true
-    }
-  },
+  "parser": "babel-eslint",
   "env": {
-    "node": true
+    "node": true,
+    "browser": true,
+    "jest/globals": true
   },
-  "extends": ["airbnb", "prettier"],
-  "plugins": ["prettier"],
+  "extends": ["airbnb", "@kth/eslint-config-kth", "prettier", "plugin:jest/recommended"],
+  "plugins": ["prettier", "jest"],
   "rules": {
-    "import/newline-after-import": ["error", { "count": 1 }],
-    "prettier/prettier": ["error"],
+    "import/newline-after-import": [
+      "error",
+      {
+        "count": 1
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "semi": ["error", "never"],
+    "quotes": [1, "single", "avoid-escape"],
+    "array-callback-return": "off",
     "global-require": "off",
     "prefer-template": "off",
     "import/order": "off",
@@ -31,6 +38,7 @@
         "memberSyntaxSortOrder": ["all", "single", "multiple", "none"]
       }
     ],
-    "strict": "off"
+    "strict": "off",
+    "newline-after-var": [2, "always"]
   }
 }

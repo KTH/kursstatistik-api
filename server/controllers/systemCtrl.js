@@ -1,27 +1,18 @@
 'use strict'
 
 const packageFile = require('../../package.json')
+const os = require('os')
+const fs = require('fs')
+const log = require('@kth/log')
 const getPaths = require('kth-node-express-routing').getPaths
 const version = require('../../config/version')
 const config = require('../configuration').server
+const monitorSystems = require('@kth/monitor')
 
 const Promise = require('bluebird')
 const registry = require('component-registry').globalRegistry
 const { IHealthCheck } = require('kth-node-monitor').interfaces
 const exec = require('child_process').exec
-
-/**
- * System controller for functions such as about and monitor.
- * Avoid making changes here in sub-projects.
- */
-module.exports = {
-  monitor: getMonitor,
-  about: getAbout,
-  robotsTxt: getRobotsTxt,
-  paths: getPathsHandler,
-  checkAPIKey: checkAPIKey,
-  swagger: getSwagger,
-}
 
 /**
  * GET /swagger.json
@@ -32,26 +23,48 @@ function getSwagger(req, res) {
 }
 
 /**
+ * GET /swagger
+ * Swagger
+ */
+function getSwaggerUI(req, res) {
+  const pathToSwaggerUi = require('swagger-ui-dist').absolutePath()
+  const swaggerUrl = configServer.proxyPrefixPath.uri + '/swagger.json'
+  const petstoreUrl = 'https://petstore.swagger.io/v2/swagger.json'
+
+  const swaggerInitializerContent = fs
+    .readFileSync(`${pathToSwaggerUi}/swagger-initializer.js`)
+    .toString()
+    .replace(petstoreUrl, swaggerUrl)
+
+  return res.type('text/javascript').send(swaggerInitializerContent)
+}
+
+/**
  * GET /_about
  * About page
  */
 function getAbout(req, res) {
   const paths = getPaths()
+
   res.render('system/about', {
-    layout: '',
+    layout: '', // must be empty by some reason
     appName: JSON.stringify(packageFile.name),
     appVersion: JSON.stringify(packageFile.version),
     appDescription: JSON.stringify(packageFile.description),
+    config: JSON.stringify(configServer.templateConfig),
     version: JSON.stringify(version),
-    config: JSON.stringify(config.templateConfig),
     gitBranch: JSON.stringify(version.gitBranch),
     gitCommit: JSON.stringify(version.gitCommit),
-    jenkinsBuild: JSON.stringify(version.jenkinsBuild),
-    jenkinsBuildDate: JSON.stringify(version.jenkinsBuildDate),
+    jenkinsBuildDate: version.jenkinsBuild
+      ? _simpleDate(new Date(parseInt(version.jenkinsBuild, 10) * 1000))
+      : JSON.stringify(version.jenkinsBuildDate),
     dockerName: JSON.stringify(version.dockerName),
     dockerVersion: JSON.stringify(version.dockerVersion),
     monitorUri: paths.system.monitor.uri,
     robotsUri: paths.system.robots.uri,
+    hostname: os.hostname(),
+    started,
+    env: process.env.NODE_ENV,
   })
 }
 
@@ -121,4 +134,17 @@ function getPathsHandler(req, res) {
 
 function checkAPIKey(req, res) {
   res.end()
+}
+
+/**
+ * System controller for functions such as about and monitor.
+ * Avoid making changes here in sub-projects.
+ */
+module.exports = {
+  monitor: getMonitor,
+  about: getAbout,
+  robotsTxt: getRobotsTxt,
+  paths: getPathsHandler,
+  checkAPIKey: checkAPIKey,
+  swagger: getSwagger,
 }
