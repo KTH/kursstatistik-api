@@ -1,9 +1,10 @@
 'use strict'
 
-const server = require('kth-node-server')
+const server = require('@kth/server')
 const path = require('path')
 // Load .env file in development mode
 const nodeEnv = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()
+
 if (nodeEnv === 'development' || nodeEnv === 'dev' || !nodeEnv) {
   require('dotenv').config()
 }
@@ -21,7 +22,7 @@ module.exports.getPaths = () => getPaths()
  * ******* LOGGING *******
  * ***********************
  */
-const log = require('kth-node-log')
+const log = require('@kth/log')
 const packageFile = require('../package.json')
 
 const logConfiguration = {
@@ -33,6 +34,7 @@ const logConfiguration = {
   stdout: config.logging.stdout,
   src: config.logging.src,
 }
+
 log.init(logConfiguration)
 
 /* **************************
@@ -42,7 +44,7 @@ log.init(logConfiguration)
 const exphbs = require('express-handlebars')
 
 server.set('views', path.join(__dirname, '/views'))
-server.engine('handlebars', exphbs())
+server.engine('handlebars', exphbs.engine())
 server.set('view engine', 'handlebars')
 
 /* ******************************
@@ -73,6 +75,7 @@ server.use(cookieParser())
  * ******************************
  */
 const passport = require('passport')
+
 require('./authentication')
 
 server.use(passport.initialize())
@@ -91,26 +94,36 @@ server.use(passport.session())
  */
 const { addPaths } = require('kth-node-express-routing')
 
-const { createApiPaths, createSwaggerRedirectHandler, notFoundHandler, errorHandler } = require('kth-node-api-common')
+const {
+  createApiPaths,
+  createSwaggerRedirectHandler,
+  notFoundHandler,
+  errorHandler,
+} = require('@kth/kth-node-api-common')
 const swaggerData = require('../swagger.json')
 const { System } = require('./controllers')
 
+const _addProxy = uri => `${config.proxyPrefixPath.uri}${uri}`
+
 // System pages routes
 const systemRoute = AppRouter()
-systemRoute.get('system.monitor', config.proxyPrefixPath.uri + '/_monitor', System.monitor)
-systemRoute.get('system.about', config.proxyPrefixPath.uri + '/_about', System.about)
-systemRoute.get('system.paths', config.proxyPrefixPath.uri + '/_paths', System.paths)
+
+systemRoute.get('system.monitor', _addProxy('/_monitor'), System.monitor)
+systemRoute.get('system.about', _addProxy('/_about'), System.about)
+systemRoute.get('system.paths', _addProxy('/_paths'), System.paths)
 systemRoute.get('system.robots', '/robots.txt', System.robotsTxt)
-systemRoute.get('system.swagger', config.proxyPrefixPath.uri + '/swagger.json', System.swagger)
+systemRoute.get('system.swaggerUI', _addProxy('/swagger/swagger-initializer.js'), System.swaggerUI)
+systemRoute.get('system.swagger', _addProxy('/swagger.json'), System.swagger)
 server.use('/', systemRoute.getRouter())
 
 // Swagger UI
 const express = require('express')
 const pathToSwaggerUi = require('swagger-ui-dist').absolutePath()
 
-const swaggerUrl = config.proxyPrefixPath.uri + '/swagger'
-const redirectUrl = `${swaggerUrl}?url=${getPaths().system.swagger.uri}`
-server.use(swaggerUrl, createSwaggerRedirectHandler(redirectUrl, config.proxyPrefixPath.uri))
+const swaggerUrl = _addProxy('/swagger')
+const { swaggerHandler } = require('./swagger')
+
+server.use(swaggerUrl, swaggerHandler)
 server.use(swaggerUrl, express.static(pathToSwaggerUi))
 
 // Add API endpoints defined in swagger to path definitions so we can use them to register API enpoint handlers

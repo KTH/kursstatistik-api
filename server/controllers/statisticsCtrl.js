@@ -1,6 +1,6 @@
 'use strict'
 
-const log = require('kth-node-log')
+const log = require('@kth/log')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const ibmdb = require('ibm_db')
@@ -20,6 +20,7 @@ function createQueryCallback(res, conn, endDate) {
       registeredStudents: '',
       examinationGrade: '',
     }
+
     responseObject.registeredStudents = data.length
     let examinationInPeriod = 0
 
@@ -52,6 +53,7 @@ function createQueryString(endDate, ladokRoundIdList) {
   const reRegistered = 0
   const registeredInPeriod = 1
   const periodInOrder = 1
+
   let formattedUID = ''
 
   const sqlFirstPartQuery = `
@@ -61,6 +63,7 @@ function createQueryString(endDate, ladokRoundIdList) {
       AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
       AND PERIOD_I_ORDNING = ${periodInOrder}
     `
+
   log.debug('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
 
   for (let index = 0; index < ladokRoundIdList.length; index++) {
@@ -90,6 +93,7 @@ async function requestRoundStatisticsByLadokId(req, res) {
 
   try {
     const connectionString = `DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=${process.env.STUNNEL_PORT};PROTOCOL=TCPIP`
+
     ibmdb.open(connectionString, createConnectionCallback(res, queryString, endDate))
     return null
   } catch (err) {
