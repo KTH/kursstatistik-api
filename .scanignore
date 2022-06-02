@@ -1,3 +1,4 @@
 /config/serverSettings.js
+/config/version.js
 /docker-compose-integration-tests.yml
 /package-lock.json
