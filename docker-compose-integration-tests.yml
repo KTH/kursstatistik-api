@@ -5,16 +5,16 @@ services:
     image: $LOCAL_IMAGE_ID
     environment:
       SERVICE_PUBLISH: '/api/kursstatistik'
-      SERVER_PORT: 3000
+      SERVER_PORT: 3001
       KURSSTATISTIK_API_KEYS_0: '?name=test&apiKey=1234&scope=read'
 
   integration:
     build: ./test/integration
     environment:
-      INTEGRATION_TEST_BASEURL: 'http://api:3000/api/kursstatistik'
+      INTEGRATION_TEST_BASEURL: 'http://api:3001/api/kursstatistik'
       INTEGRATION_TEST_SUCCESS_DELAY: '${SUCCESS_DELAY:-0}'
       INTEGRATION_TEST_FAILURE_DELAY: '${FAILURE_DELAY:-0}'
-      WAIT_HOSTS: 'api:3000'
+      WAIT_HOSTS: 'api:3001'
       WAIT_HOSTS_TIMEOUT: 30
     depends_on:
       - api
