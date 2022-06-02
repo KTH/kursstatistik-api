@@ -1,13 +1,3 @@
 {
-  "extends": ["@kth/eslint-config-kth"],
-  "rules": {
-    "import/newline-after-import": [
-      "error",
-      {
-        "count": 1
-      }
-    ],
-    "import/order": "off",
-    "comma-dangle": ["error", "never"]
-  }
+  "extends": ["@kth/eslint-config-kth"]
 }
