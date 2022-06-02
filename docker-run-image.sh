@@ -13,8 +13,8 @@ echoYellow "|    Running docker image of the application with Docker for dev env
 echoYellow "|---------------------------------------------------------------------|\n"
 
 IMAGE_NAME="kursstatistik-api-image"
-OUTSIDE_HOST_PORT="3003"
-INSIDE_CONTAINER_PORT="3003"
+OUTSIDE_HOST_PORT="3001"
+INSIDE_CONTAINER_PORT="3001"
 
 
 if [ "$ENV" == "dev" ]; then
