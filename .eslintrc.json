@@ -1,12 +1,5 @@
 {
-  "parser": "babel-eslint",
-  "env": {
-    "node": true,
-    "browser": true,
-    "jest/globals": true
-  },
-  "extends": ["airbnb", "@kth/eslint-config-kth", "prettier", "plugin:jest/recommended"],
-  "plugins": ["prettier", "jest"],
+  "extends": ["@kth/eslint-config-kth"],
   "rules": {
     "import/newline-after-import": [
       "error",
@@ -14,31 +7,7 @@
         "count": 1
       }
     ],
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "auto"
-      }
-    ],
-    "semi": ["error", "never"],
-    "quotes": [1, "single", "avoid-escape"],
-    "array-callback-return": "off",
-    "global-require": "off",
-    "prefer-template": "off",
     "import/order": "off",
-    "no-plusplus": "off",
-    "no-restricted-syntax": "off",
-    "no-await-in-loop": "off",
-    "sort-imports": [
-      "error",
-      {
-        "ignoreCase": true,
-        "ignoreDeclarationSort": true,
-        "ignoreMemberSort": true,
-        "memberSyntaxSortOrder": ["all", "single", "multiple", "none"]
-      }
-    ],
-    "strict": "off",
-    "newline-after-var": [2, "always"]
+    "comma-dangle": ["error", "never"]
   }
 }

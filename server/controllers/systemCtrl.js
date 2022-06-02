@@ -4,15 +4,36 @@ const packageFile = require('../../package.json')
 const os = require('os')
 const fs = require('fs')
 const log = require('@kth/log')
-const getPaths = require('kth-node-express-routing').getPaths
+const { getPaths } = require('kth-node-express-routing')
 const version = require('../../config/version')
-const config = require('../configuration').server
+const configServer = require('../configuration').server
 const monitorSystems = require('@kth/monitor')
-
 const Promise = require('bluebird')
-const registry = require('component-registry').globalRegistry
-const { IHealthCheck } = require('kth-node-monitor').interfaces
-const exec = require('child_process').exec
+const { exec } = require('child_process')
+
+/**
+ * * Adds a zero (0) to numbers less then ten (10)
+ */
+function zeroPad(value) {
+  return value < 10 ? '0' + value : value
+}
+
+/**
+ * Takes a Date object and returns a simple date string.
+ */
+function _simpleDate(date) {
+  const year = date.getFullYear()
+  const month = zeroPad(date.getMonth() + 1)
+  const day = zeroPad(date.getDate())
+  const hours = zeroPad(date.getHours())
+  const minutes = zeroPad(date.getMinutes())
+  const seconds = zeroPad(date.getSeconds())
+  const hoursBeforeGMT = date.getTimezoneOffset() / -60
+  const timezone = [' GMT', ' CET', ' CEST'][hoursBeforeGMT] || ''
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${timezone}`
+}
+const started = _simpleDate(new Date())
 
 /**
  * GET /swagger.json
@@ -72,11 +93,13 @@ function getAbout(req, res) {
  * GET /_monitor
  * Monitor page
  */
-function getMonitor(req, res) {
-  const stunnelStatus = new Promise((resolve, reject) => {
+async function getMonitor(req, res) {
+  const stunnelStatus = new Promise(resolve => {
     exec('ps aux | grep "[s]tunnel"', (error, stdout, stderr) => {
       let message = 'OK'
+
       let statusCode = 200
+
       if (stderr) {
         message = 'ERROR Stunnel status check failed'
         statusCode = 500
@@ -87,33 +110,25 @@ function getMonitor(req, res) {
     })
   })
 
-  // If we need local system checks, such as memory or disk, we would add it here.
-  // Make sure it returns a promise which resolves with an object containing:
-  // {statusCode: ###, message: '...'}
-  // The property statusCode should be standard HTTP status codes.
-  const localSystems = stunnelStatus
-
-  /* -- You will normally not change anything below this line -- */
-
-  // Determine system health based on the results of the checks above. Expects
-  // arrays of promises as input. This returns a promise
-  const systemHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-system-check')
-  const systemStatus = systemHealthUtil.status(localSystems)
-
-  systemStatus
-    .then(status => {
-      // Return the result either as JSON or text
-      if (req.headers['accept'] === 'application/json') {
-        let outp = systemHealthUtil.renderJSON(status)
-        res.status(status.statusCode).json(outp)
-      } else {
-        let outp = systemHealthUtil.renderText(status)
-        res.type('text').status(status.statusCode).send(outp)
-      }
-    })
-    .catch(err => {
-      res.type('text').status(500).send(err)
-    })
+  try {
+    await monitorSystems(req, res, [
+      {
+        key: 'local',
+        isResolved: true,
+        message: '- local system checks: OK',
+        statusCode: 200,
+      },
+      {
+        key: 'stunnel',
+        required: true, // if required
+        message: stunnelStatus.message,
+        statusCode: stunnelStatus.statusCode,
+      },
+    ])
+  } catch (error) {
+    log.error('Monitor failed', error)
+    res.status(500).end()
+  }
 }
 
 /**
@@ -145,6 +160,7 @@ module.exports = {
   about: getAbout,
   robotsTxt: getRobotsTxt,
   paths: getPathsHandler,
-  checkAPIKey: checkAPIKey,
+  checkAPIKey,
   swagger: getSwagger,
+  swaggerUI: getSwaggerUI,
 }

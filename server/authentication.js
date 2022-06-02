@@ -5,8 +5,9 @@ const config = require('./configuration').server
 const passport = require('passport')
 const server = require('./server')
 const apiKey = require('kth-node-api-key-strategy')
+
 const ApiKeyStrategy = apiKey.Strategy
-const options = { log: log }
+const options = { log }
 const verify = (req, apikey, done) => {
   apiKey.verifyApiKey(req, apikey, config.api_keys, done)
 }

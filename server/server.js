@@ -4,6 +4,7 @@ const server = require('@kth/server')
 const path = require('path')
 // Load .env file in development mode
 const nodeEnv = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()
+
 if (nodeEnv === 'development' || nodeEnv === 'dev' || !nodeEnv) {
   require('dotenv').config()
 }
@@ -33,6 +34,7 @@ const logConfiguration = {
   stdout: config.logging.stdout,
   src: config.logging.src,
 }
+
 log.init(logConfiguration)
 
 /* **************************
@@ -73,6 +75,7 @@ server.use(cookieParser())
  * ******************************
  */
 const passport = require('passport')
+
 require('./authentication')
 
 server.use(passport.initialize())
@@ -104,7 +107,8 @@ const _addProxy = uri => `${config.proxyPrefixPath.uri}${uri}`
 
 // System pages routes
 const systemRoute = AppRouter()
-ystemRoute.get('system.monitor', _addProxy('/_monitor'), System.monitor)
+
+systemRoute.get('system.monitor', _addProxy('/_monitor'), System.monitor)
 systemRoute.get('system.about', _addProxy('/_about'), System.about)
 systemRoute.get('system.paths', _addProxy('/_paths'), System.paths)
 systemRoute.get('system.robots', '/robots.txt', System.robotsTxt)
@@ -152,36 +156,3 @@ server.use(notFoundHandler)
 server.use(errorHandler)
 
 module.exports = server
-
-swagger.js
-
-const config = require('./configuration').server
-
-/**
- * Middleware to filter out swagger files
- */
-const swaggerFilesRE = /(index|swagger-ui|favicon|swagger-initializer).*\.(css|js|png|html)/
-
-function swaggerHandler(req, res, next) {
-  if (
-    req.originalUrl === config.proxyPrefixPath.uri + '/swagger' ||
-    req.originalUrl === config.proxyPrefixPath.uri + '/swagger/'
-  ) {
-    // This redirect is needed since swagger js & css files to get right paths
-    return res.redirect(config.proxyPrefixPath.uri + '/swagger/index.html')
-  }
-  if (req.originalUrl.indexOf('/swagger/') >= 0) {
-    const requestedUrl = req.originalUrl.replace(`${config.proxyPrefixPath.uri}/swagger/`, '')
-
-    if (swaggerFilesRE.test(requestedUrl)) {
-      return next()
-    }
-
-    return res.status(404).json({ message: `Not found: ${req.originalUrl}` })
-  }
-  return next()
-}
-
-module.exports = {
-  swaggerHandler,
-}
