@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Stockholm
 
 RUN apt-get update
-RUN apt-get -y install python2 make g++ python2 libxml2 openssl stunnel curl git
+RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
 
 # nodejs v16
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
