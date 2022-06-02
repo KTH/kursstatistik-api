@@ -22,7 +22,7 @@ COPY ["package.json", "package.json"]
 # RUN npm install --production
 #RUN npm install --unsafe-perm ibm_db
 
-RUN npm set-script prepare "" && npm install --production --no-optional --unsafe-perm && \
+RUN npm set-script prepare "" && npm install --global node-gyp && npm install --production --no-optional --unsafe-perm && \
     npm audit fix --only=prod
 
 COPY ["config", "config"]
