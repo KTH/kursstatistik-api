@@ -7,7 +7,8 @@ ENV TZ=Europe/Stockholm
 RUN apt-get update
 RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+#RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
 RUN mkdir -p /npm && \
