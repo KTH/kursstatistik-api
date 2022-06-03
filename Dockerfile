@@ -5,20 +5,27 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Stockholm
 
 RUN apt-get update
-RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
+RUN apt-get -y install python3 make g++ python3 libxml2 openssl stunnel curl git
 
-# nodejs v16
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+#RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
-WORKDIR /application
-ENV NODE_PATH /application
+RUN mkdir -p /npm && \
+    mkdir -p /application
+WORKDIR /npm
 
 COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
 
-RUN npm set-script prepare "" && npm install --location=global node-gyp && npm install --production --no-optional --unsafe-perm && \
-    npm audit fix --only=prod 
+#RUN npm set-script prepare ""
+RUN npm install --location=global node-gyp --ignore-scripts
+RUN npm install --production --ignore-scripts
+RUN npm install --unsafe-perm ibm_db --ignore-scripts
+
+WORKDIR /application
+RUN cp -a /npm/node_modules /application && \
+    rm -rf /npm
 
 COPY ["config", "config"]
 COPY ["package.json", "package.json"]
