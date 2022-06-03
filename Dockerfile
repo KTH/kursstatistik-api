@@ -17,7 +17,8 @@ WORKDIR /npm
 COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
 
-RUN npm install --global node-gyp
+RUN npm set-script prepare ""
+RUN npm install --location=global node-gyp
 RUN npm install --production
 RUN npm install --unsafe-perm ibm_db
 
