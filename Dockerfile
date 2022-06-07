@@ -7,7 +7,7 @@ RUN apt-get update
 #OpenSSL 3
 RUN apt upgrade -y
 RUN apt install build-essential checkinstall zlib1g-dev -y
-RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
+RUN apt-get -y install python2 make gcc g++ python2.7 libxml2 openssl stunnel curl git
 
 #Stunnel
 #RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
