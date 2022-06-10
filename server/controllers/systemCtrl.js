@@ -1,15 +1,16 @@
 'use strict'
 
-const packageFile = require('../../package.json')
 const os = require('os')
 const fs = require('fs')
+const { exec } = require('child_process')
+
 const log = require('@kth/log')
+const monitorSystems = require('@kth/monitor')
+const Promise = require('bluebird')
 const { getPaths } = require('kth-node-express-routing')
 const version = require('../../config/version')
 const configServer = require('../configuration').server
-const monitorSystems = require('@kth/monitor')
-const Promise = require('bluebird')
-const { exec } = require('child_process')
+const packageFile = require('../../package.json')
 
 /**
  * * Adds a zero (0) to numbers less then ten (10)
