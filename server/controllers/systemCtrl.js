@@ -6,7 +6,6 @@ const { exec } = require('child_process')
 
 const log = require('@kth/log')
 const monitorSystems = require('@kth/monitor')
-const Promise = require('bluebird')
 const { getPaths } = require('kth-node-express-routing')
 const version = require('../../config/version')
 const configServer = require('../configuration').server
@@ -95,20 +94,19 @@ function getAbout(req, res) {
  * Monitor page
  */
 async function getMonitor(req, res) {
-  const stunnelStatus = new Promise(resolve => {
-    exec('ps aux | grep "[s]tunnel"', (error, stdout, stderr) => {
-      let message = 'OK'
+  const stunnelStatus = {
+    message: '- stunnel status: OK',
+    statusCode: 200,
+  }
 
-      let statusCode = 200
-
-      if (stderr) {
-        message = 'ERROR Stunnel status check failed'
-        statusCode = 500
-      } else if (error || !stdout) {
-        message = 'ERROR Stunnel has stopped'
-      }
-      resolve({ statusCode, message })
-    })
+  exec('ps aux | grep "[s]tunnel"', { timeout: 1500 }, (error, stdout, stderr) => {
+    if (stderr) {
+      stunnelStatus.message = 'ERROR Stunnel status check failed'
+      stunnelStatus.statusCode = 500
+    } else if (error || !stdout) {
+      stunnelStatus.message = 'ERROR Stunnel has stopped'
+      stunnelStatus.statusCode = 500
+    }
   })
 
   try {
@@ -121,6 +119,7 @@ async function getMonitor(req, res) {
       },
       {
         key: 'stunnel',
+        isResolved: stunnelStatus.statusCode === 200,
         required: true, // if required
         message: stunnelStatus.message,
         statusCode: stunnelStatus.statusCode,
