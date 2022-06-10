@@ -1,20 +1,26 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
+#FROM ubuntu:latest
 LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
+# Ubuntu version
+RUN cat /etc/issue
+#ARG DEBIAN_FRONTEND=noninteractive
 
+# Disable Prompt During Packages Installation
 ENV DEBIAN_FRONTEND=noninteractive
+
 ENV TZ=Europe/Stockholm
+
 RUN apt-get update
-#OpenSSL 3
+# need to upgrade to get OpenSSL 3
 RUN apt upgrade -y
 RUN apt install apt-utils build-essential checkinstall zlib1g-dev -y
 RUN apt-get -y install python2 make gcc g++ python2.7 libxml2 openssl stunnel curl git
 
 #Stunnel
 #RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
-# Ubuntu version
-RUN cat /etc/issue
 
-#OpenSSL 3
+
+# Check OpenSSL version -> 3
 RUN openssl version -a
 RUN ls /var/run/
 
@@ -38,7 +44,9 @@ RUN npm install bindings
 WORKDIR /application
 RUN cp -a /npm/node_modules /application && \
     rm -rf /npm
+
 RUN pwd
+# Check ulimit
 RUN cat /etc/security/limits.conf
 
 
