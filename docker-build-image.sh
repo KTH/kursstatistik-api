@@ -27,7 +27,7 @@ if [ "$ENV" == "dev" ]; then
 
   echo
   echoYellow "  3. Build Docker image: a name tag is $IMAGE_NAME\n"
-  docker build -f Dockerfile -t "$IMAGE_NAME" .
+  docker build --progress=plain -f Dockerfile -t "$IMAGE_NAME" .
 
   echo
   echoYellow "  4. List images\n"
