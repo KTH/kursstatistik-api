@@ -11,6 +11,8 @@ RUN apt-get -y install python2 make gcc g++ python2.7 libxml2 openssl stunnel cu
 
 #Stunnel
 #RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
+# Ubuntu version
+RUN cat /etc/issue
 
 #OpenSSL 3
 RUN openssl version -a
