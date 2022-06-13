@@ -3,24 +3,20 @@ FROM ubuntu:20.04
 LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
 # Ubuntu version
 RUN cat /etc/issue
-#ARG DEBIAN_FRONTEND=noninteractive
 
 # Disable Prompt During Packages Installation
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
+#ENV DEBIAN_FRONTEND=noninteractive
 
 ENV TZ=Europe/Stockholm
 
 RUN apt-get update
-# need to upgrade to get OpenSSL 3
+# will be needed for Ubuntu 22.04 locally to upgrade to get OpenSSL 3
 RUN apt upgrade -y
-RUN apt install apt-utils build-essential checkinstall zlib1g-dev -y
+#RUN apt install apt-utils build-essential checkinstall zlib1g-dev -y
 RUN apt-get -y install python2 make gcc g++ python2.7 libxml2 openssl stunnel curl git
 
-#Stunnel
-#RUN apt-get -y install python2 make g++ python2.7 libxml2 openssl stunnel curl git
-
-
-# Check OpenSSL version -> 3
+# Check OpenSSL version
 RUN openssl version -a
 RUN ls /var/run/
 

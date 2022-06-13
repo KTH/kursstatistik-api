@@ -19,6 +19,8 @@ if [ "$ENV" == "dev" ]; then
 
   echo
   echoYellow "  1. Stop previous Docker image: a name tag is $IMAGE_NAME\n"
+  docker system prune --force
+  docker container prune --force
   docker stop "$IMAGE_NAME"
 
   echo
