@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:latest
 #FROM ubuntu:latest
 LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
 # Ubuntu version
@@ -33,7 +33,7 @@ COPY ["package.json", "package.json"]
 
 RUN npm set-script prepare ""
 RUN npm install --location=global node-gyp
-RUN npm install --production
+RUN npm install --omit=dev
 RUN npm install --unsafe-perm ibm_db
 RUN npm install bindings
 
