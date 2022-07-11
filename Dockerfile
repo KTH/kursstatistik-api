@@ -34,8 +34,7 @@ COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
 
 RUN npm pkg delete scripts.prepare  && \
-    npm ci --unsafe-perm && \
-    npm prune --production 
+    npm install --omit=dev
 
 # npm install --location=global node-gyp  && \
 # npm install --omit=dev
