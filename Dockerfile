@@ -56,10 +56,10 @@ RUN chmod +x ./run.sh
 
 EXPOSE 3001
 
-# Create a new user (not root)    
-RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
-# Run as user node (not root)    
-USER kursstatistikuser
-RUN id -u
+# # Create a new user (not root)    
+# RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
+# # Run as user node (not root)    
+# USER kursstatistikuser
+# RUN id -u
 
 CMD ["./run.sh","node", "app.js"]
