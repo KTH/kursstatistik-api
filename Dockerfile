@@ -34,21 +34,21 @@ WORKDIR /application
 USER kursstatistikuser
 RUN id -u
 
-COPY --chown=kursstatistikuser ["package-lock.json", "package-lock.json"]
-COPY --chown=kursstatistikuser ["package.json", "package.json"]
+COPY --chown=kursstatistikuser:kursstatistik ["package-lock.json", "package-lock.json"]
+COPY --chown=kursstatistikuser:kursstatistik ["package.json", "package.json"]
 
 RUN npm pkg delete scripts.prepare && \
     npm install --omit=dev
-# RUN npm install --unsafe-perm ibm_db
-
-
-COPY --chown=kursstatistikuser ["config", "config"]
-COPY --chown=kursstatistikuser ["app.js", "app.js"]
-COPY --chown=kursstatistikuser ["swagger.json", "swagger.json"]
-COPY --chown=kursstatistikuser ["server", "server"]
-COPY --chown=kursstatistikuser ["run.sh", "run.sh"]
-
+# change premission of node_modules for unit/integration tests
 RUN chown -R kursstatistikuser /application/node_modules
+
+COPY --chown=kursstatistikuser:kursstatistik ["config", "config"]
+COPY --chown=kursstatistikuser:kursstatistik ["app.js", "app.js"]
+COPY --chown=kursstatistikuser:kursstatistik ["swagger.json", "swagger.json"]
+COPY --chown=kursstatistikuser:kursstatistik ["server", "server"]
+COPY --chown=kursstatistikuser:kursstatistik ["run.sh", "run.sh"]
+
+
 RUN chmod +x ./run.sh
 
 EXPOSE 3001
