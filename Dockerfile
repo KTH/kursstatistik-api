@@ -1,5 +1,6 @@
 FROM ubuntu:latest
-
+# Create a new user (not root)    
+RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
 LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
 # Ubuntu version
 RUN cat /etc/issue
@@ -24,23 +25,16 @@ RUN ls /var/run/
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
-RUN mkdir -p /npm && \
-    mkdir -p /application
-
-
+RUN mkdir -p /npm
 WORKDIR /npm
-
 COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
-
-RUN npm pkg delete scripts.prepare  && \
+RUN npm pkg delete scripts.prepare && \
     npm install --omit=dev
-
-# npm install --location=global node-gyp  && \
-# npm install --omit=dev
 # RUN npm install --unsafe-perm ibm_db
 # RUN npm install bindings
-
+RUN mkdir -p /application && \
+    chown -R kursstatistikuser /application
 WORKDIR /application
 RUN cp -a /npm/node_modules /application && \
     rm -rf /npm
@@ -56,10 +50,8 @@ RUN chmod +x ./run.sh
 
 EXPOSE 3001
 
-# # Create a new user (not root)    
-# RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
-# # Run as user node (not root)    
-# USER kursstatistikuser
-# RUN id -u
+# Run as user node (not root)    
+USER kursstatistikuser
+RUN id -u
 
 CMD ["./run.sh","node", "app.js"]
