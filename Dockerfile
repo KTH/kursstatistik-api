@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-#FROM ubuntu:latest
+
 LABEL maintainer="KTH StudAdm studadm.developers@kth.se"
 # Ubuntu version
 RUN cat /etc/issue
@@ -26,25 +26,25 @@ RUN apt-get install -y nodejs
 
 RUN mkdir -p /npm && \
     mkdir -p /application
+
+
 WORKDIR /npm
 
 COPY ["package-lock.json", "package-lock.json"]
 COPY ["package.json", "package.json"]
 
-RUN npm set-script prepare ""
-RUN npm install --location=global node-gyp
-RUN npm install --omit=dev
-RUN npm install --unsafe-perm ibm_db
-RUN npm install bindings
+RUN npm pkg delete scripts.prepare  && \
+    npm ci --unsafe-perm && \
+    npm prune --production 
+
+# npm install --location=global node-gyp  && \
+# npm install --omit=dev
+# RUN npm install --unsafe-perm ibm_db
+# RUN npm install bindings
 
 WORKDIR /application
 RUN cp -a /npm/node_modules /application && \
     rm -rf /npm
-
-RUN pwd
-# Check ulimit
-RUN cat /etc/security/limits.conf
-
 
 COPY ["config", "config"]
 COPY ["package.json", "package.json"]
@@ -56,5 +56,11 @@ COPY ["run.sh", "run.sh"]
 RUN chmod +x ./run.sh
 
 EXPOSE 3001
+
+# Create a new user (not root)    
+RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
+# Run as user node (not root)    
+USER kursstatistikuser
+RUN id -u
 
 CMD ["./run.sh","node", "app.js"]
