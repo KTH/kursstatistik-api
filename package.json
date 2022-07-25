@@ -20,7 +20,7 @@
   "dependencies": {
     "@kth/kth-node-api-common": "^2.0.3",
     "@kth/log": "^4.0.5",
-    "@kth/monitor": "^3.0.24",
+    "@kth/monitor": "^3.0.25",
     "@kth/server": "^4.0.2",
     "applicationinsights": "^2.3.3",
     "bindings": "^1.5.0",
@@ -35,7 +35,7 @@
     "kth-node-access-log": "^0.2.9",
     "kth-node-api-key-strategy": "^1.0.14",
     "kth-node-configuration": "^2.0.11",
-    "kth-node-express-routing": "^2.0.14",
+    "kth-node-express-routing": "^2.0.15",
     "kth-node-i18n": "^1.0.14",
     "os": "^0.1.2",
     "passport": "^0.4.1",
