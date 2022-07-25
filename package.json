@@ -18,7 +18,7 @@
     "start-dev": "cross-env NODE_ENV=development nodemon app.js"
   },
   "dependencies": {
-    "@kth/kth-node-api-common": "^2.0.2",
+    "@kth/kth-node-api-common": "^2.0.3",
     "@kth/log": "^4.0.4",
     "@kth/monitor": "^3.0.24",
     "@kth/server": "^4.0.2",
@@ -32,7 +32,7 @@
     "express-handlebars": "^6.0.6",
     "fs": "0.0.1-security",
     "ibm_db": "^2.8.1",
-    "kth-node-access-log": "^0.2.8",
+    "kth-node-access-log": "^0.2.9",
     "kth-node-api-key-strategy": "^1.0.14",
     "kth-node-configuration": "^2.0.11",
     "kth-node-express-routing": "^2.0.14",
