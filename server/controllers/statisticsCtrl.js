@@ -56,25 +56,22 @@ function createQueryString(endDate, ladokRoundIdList) {
 
   let formattedUID = ''
 
-  const sqlFirstPartQuery = `
-    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
-    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
-    WHERE OMREGISTRERAD_INOM_PERIOD = ${reRegistered}
-      AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
-      AND PERIOD_I_ORDNING = ${periodInOrder}
-    `
+  const sqlFirstPartQuery = `SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE OMREGISTRERAD_INOM_PERIOD = ${reRegistered} AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod} AND PERIOD_I_ORDNING = ${periodInOrder}`
 
   log.debug('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
 
   for (let index = 0; index < ladokRoundIdList.length; index++) {
     if (index === 0) {
-      formattedUID += ' AND ( UTBILDNINGSTILLFALLE_UID = X(?)'
+      formattedUID += " AND ( UTBILDNINGSTILLFALLE_UID = X'(?)'"
     } else {
-      formattedUID += ' OR UTBILDNINGSTILLFALLE_UID = X(?)'
+      formattedUID += " OR UTBILDNINGSTILLFALLE_UID = X'(?)'"
     }
   }
   // creating query parameter
-  const param1 = { ParamType: 'ARRAY', DataType: 1, Data: ladokRoundIdList }
+  // we are using here ladokId === ladokUID(bf43101f-543f-4td6-b45f-c14a1b0b43f2)
+  const ladokRoundIdListParams = ladokRoundIdList.map(ladokId => ladokId.split('-').join(''))
+
+  const param1 = { ParamType: 'ARRAY', DataType: 1, Data: ladokRoundIdListParams }
 
   // sending query options object to conn.query
   const queryOptions = {
