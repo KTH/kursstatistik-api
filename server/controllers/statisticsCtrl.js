@@ -68,12 +68,22 @@ function createQueryString(endDate, ladokRoundIdList) {
 
   for (let index = 0; index < ladokRoundIdList.length; index++) {
     if (index === 0) {
-      formattedUID += " AND ( UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
+      formattedUID += ' AND ( UTBILDNINGSTILLFALLE_UID = X(?)'
     } else {
-      formattedUID += " OR UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
+      formattedUID += ' OR UTBILDNINGSTILLFALLE_UID = X(?)'
     }
   }
-  return sqlFirstPartQuery + formattedUID + ')'
+  // creating query parameter
+  const param1 = { ParamType: 'ARRAY', DataType: 1, Data: ladokRoundIdList }
+
+  // sending query options object to conn.query
+  const queryOptions = {
+    sql: `${sqlFirstPartQuery}${formattedUID})`,
+    params: [param1],
+    ArraySize: 1,
+  }
+
+  return queryOptions
 }
 
 async function requestRoundStatisticsByLadokId(req, res) {
