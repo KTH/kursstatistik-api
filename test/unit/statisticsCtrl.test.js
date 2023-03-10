@@ -72,15 +72,17 @@ describe('Test functions of statisticsCtrl.js', () => {
     const ladokRoundId = 'bf42101f-5a3f-40d6-b48f-c14a0b0b43f2'
     const ladokRoundIds = [ladokRoundId]
     const roundEndDate = '2019-12-31'
-    const expectedQueryString = {
-      ArraySize: 1,
-      params: [{ Data: ['bf42101f5a3f40d6b48fc14a0b0b43f2'], DataType: 1, ParamType: 'ARRAY' }],
-      sql: "SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE OMREGISTRERAD_INOM_PERIOD = 0 AND REGISTRERAD_INOM_PERIOD = 1 AND PERIOD_I_ORDNING = 1 AND ( UTBILDNINGSTILLFALLE_UID = X'(?)')",
-    }
+    const expectedQueryString = `
+    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+    WHERE OMREGISTRERAD_INOM_PERIOD = 0
+      AND REGISTRERAD_INOM_PERIOD = 1
+      AND PERIOD_I_ORDNING = 1
+     AND ( UTBILDNINGSTILLFALLE_UID = X'bf42101f5a3f40d6b48fc14a0b0b43f2')`
 
     const { createQueryString } = require('../../server/controllers/statisticsCtrl')
     const queryString = createQueryString(roundEndDate, ladokRoundIds)
-    expect(queryString).toStrictEqual(expectedQueryString)
+    expect(queryString).toBe(expectedQueryString)
   })
 
   test('creates SQL query string with multiple round ids', async () => {
@@ -88,20 +90,17 @@ describe('Test functions of statisticsCtrl.js', () => {
     const ladokRoundId_2 = '33559e6c-5625-4259-8b45-a985860e07b1'
     const ladokRoundIds = [ladokRoundId_1, ladokRoundId_2]
     const roundEndDate = '2019-12-31'
-    const expectedQueryString = {
-      ArraySize: 1,
-      params: [
-        {
-          Data: ['bf42101f5a3f40d6b48fc14a0b0b43f2', '33559e6c562542598b45a985860e07b1'],
-          DataType: 1,
-          ParamType: 'ARRAY',
-        },
-      ],
-      sql: "SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS WHERE OMREGISTRERAD_INOM_PERIOD = 0 AND REGISTRERAD_INOM_PERIOD = 1 AND PERIOD_I_ORDNING = 1 AND ( UTBILDNINGSTILLFALLE_UID = X'(?)' OR UTBILDNINGSTILLFALLE_UID = X'(?)')",
-    }
+    const expectedQueryString = `
+    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+    WHERE OMREGISTRERAD_INOM_PERIOD = 0
+      AND REGISTRERAD_INOM_PERIOD = 1
+      AND PERIOD_I_ORDNING = 1
+     AND ( UTBILDNINGSTILLFALLE_UID = X'bf42101f5a3f40d6b48fc14a0b0b43f2' OR UTBILDNINGSTILLFALLE_UID = X'33559e6c562542598b45a985860e07b1')`
+
     const { createQueryString } = require('../../server/controllers/statisticsCtrl')
     const queryString = createQueryString(roundEndDate, ladokRoundIds)
-    expect(queryString).toStrictEqual(expectedQueryString)
+    expect(queryString).toBe(expectedQueryString)
   })
 
   test('calculates registered students and examination grade', async () => {
