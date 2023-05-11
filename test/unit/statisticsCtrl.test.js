@@ -64,7 +64,7 @@ describe('Test functions of statisticsCtrl.js', () => {
     const req = buildReq({ params: { roundEndDate }, body: ladokRoundIds })
     const res = buildRes()
 
-    const response = await requestRoundStatisticsByLadokId(req, res)
+    await requestRoundStatisticsByLadokId(req, res)
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 
@@ -73,16 +73,25 @@ describe('Test functions of statisticsCtrl.js', () => {
     const ladokRoundIds = [ladokRoundId]
     const roundEndDate = '2019-12-31'
     const expectedQueryString = `
-    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
-    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
-    WHERE OMREGISTRERAD_INOM_PERIOD = 0
-      AND REGISTRERAD_INOM_PERIOD = 1
-      AND PERIOD_I_ORDNING = 1
-     AND ( UTBILDNINGSTILLFALLE_UID = X'bf42101f5a3f40d6b48fc14a0b0b43f2')`
+  SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+  FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+  WHERE OMREGISTRERAD_INOM_PERIOD = 0
+  AND REGISTRERAD_INOM_PERIOD = 1
+  AND PERIOD_I_ORDNING = 1
+  AND (UTBILDNINGSTILLFALLE_UID = ?)`
 
-    const { createQueryString } = require('../../server/controllers/statisticsCtrl')
-    const queryString = createQueryString(roundEndDate, ladokRoundIds)
-    expect(queryString).toBe(expectedQueryString)
+    const expectedParams = [
+      {
+        ParamType: 'INPUT',
+        SQLType: 'BINARY',
+        Data: new Uint8Array([191, 66, 16, 31, 90, 63, 64, 214, 180, 143, 193, 74, 11, 11, 67, 242]),
+      },
+    ]
+
+    const { createQueryOptions } = require('../../server/controllers/statisticsCtrl')
+    const { sql, params } = createQueryOptions(roundEndDate, ladokRoundIds)
+    expect(sql).toBe(expectedQueryString)
+    expect(params).toStrictEqual(expectedParams)
   })
 
   test('creates SQL query string with multiple round ids', async () => {
@@ -91,16 +100,25 @@ describe('Test functions of statisticsCtrl.js', () => {
     const ladokRoundIds = [ladokRoundId_1, ladokRoundId_2]
     const roundEndDate = '2019-12-31'
     const expectedQueryString = `
-    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
-    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
-    WHERE OMREGISTRERAD_INOM_PERIOD = 0
-      AND REGISTRERAD_INOM_PERIOD = 1
-      AND PERIOD_I_ORDNING = 1
-     AND ( UTBILDNINGSTILLFALLE_UID = X'bf42101f5a3f40d6b48fc14a0b0b43f2' OR UTBILDNINGSTILLFALLE_UID = X'33559e6c562542598b45a985860e07b1')`
+  SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+  FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+  WHERE OMREGISTRERAD_INOM_PERIOD = 0
+  AND REGISTRERAD_INOM_PERIOD = 1
+  AND PERIOD_I_ORDNING = 1
+  AND (UTBILDNINGSTILLFALLE_UID = ? OR UTBILDNINGSTILLFALLE_UID = ?)`
 
-    const { createQueryString } = require('../../server/controllers/statisticsCtrl')
-    const queryString = createQueryString(roundEndDate, ladokRoundIds)
-    expect(queryString).toBe(expectedQueryString)
+    const expectedParam_1 = new Uint8Array([191, 66, 16, 31, 90, 63, 64, 214, 180, 143, 193, 74, 11, 11, 67, 242])
+    const expectedParam_2 = new Uint8Array([51, 85, 158, 108, 86, 37, 66, 89, 139, 69, 169, 133, 134, 14, 7, 177])
+
+    const expectedParams = [
+      { ParamType: 'INPUT', SQLType: 'BINARY', Data: expectedParam_1 },
+      { ParamType: 'INPUT', SQLType: 'BINARY', Data: expectedParam_2 },
+    ]
+
+    const { createQueryOptions } = require('../../server/controllers/statisticsCtrl')
+    const { sql, params } = createQueryOptions(roundEndDate, ladokRoundIds)
+    expect(sql).toBe(expectedQueryString)
+    expect(params).toStrictEqual(expectedParams)
   })
 
   test('calculates registered students and examination grade', async () => {

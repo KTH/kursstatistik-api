@@ -38,58 +38,91 @@ function createQueryCallback(res, conn, endDate) {
   }
 }
 
-function createConnectionCallback(res, SQLquery, endDate) {
+function createConnectionCallback(res, queryOptions, endDate) {
   return async function connectionCallback(err, conn) {
     if (err) {
       log.debug('Error in connection to ladok uppföljningsdatabas' + err)
       return res.status(400).json({ err })
     }
-    await conn.query(SQLquery, createQueryCallback(res, conn, endDate))
+
+    await conn.query(queryOptions, createQueryCallback(res, conn, endDate))
     return null
   }
 }
 
-function createQueryString(endDate, ladokRoundIdList) {
+function createSQLParameterForLadokUID(ladokUID) {
+  const joinedLadokUID = ladokUID.split('-').join('')
+
+  const ladokUIDAsBuffer = Buffer.from(joinedLadokUID, 'hex')
+
+  const ladokUIDAsUint8Array = new Uint8Array(
+    ladokUIDAsBuffer.buffer,
+    ladokUIDAsBuffer.byteOffset,
+    ladokUIDAsBuffer.byteLength / Uint8Array.BYTES_PER_ELEMENT
+  )
+
+  const sqlParameter = { ParamType: 'INPUT', SQLType: 'BINARY', Data: ladokUIDAsUint8Array }
+
+  return sqlParameter
+}
+
+function createWhereSQLAndMatchingParams(ladokUIDList) {
+  const params = []
+  const ladokUIDSQLParts = []
+
+  for (let index = 0; index < ladokUIDList.length; index++) {
+    ladokUIDSQLParts.push(`UTBILDNINGSTILLFALLE_UID = ?`)
+
+    const parameter = createSQLParameterForLadokUID(ladokUIDList[index])
+
+    params.push(parameter)
+  }
+
+  const whereLadokUIDSQLPart = `AND (${ladokUIDSQLParts.join(' OR ')})`
+  return { sqlWhereLadokUIDPart: whereLadokUIDSQLPart, params }
+}
+
+function createQueryOptions(endDate, ladokUIDList) {
   const reRegistered = 0
   const registeredInPeriod = 1
   const periodInOrder = 1
 
-  let formattedUID = ''
-
   const sqlFirstPartQuery = `
-    SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
-    FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
-    WHERE OMREGISTRERAD_INOM_PERIOD = ${reRegistered}
-      AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
-      AND PERIOD_I_ORDNING = ${periodInOrder}
-    `
+  SELECT DISTINCT STUDENT_UID, EXAMINATIONSDATUM_KURS, UTBILDNING_KOD
+  FROM UPPFOLJNING.IO_GENOMSTROMNING_KURS
+  WHERE OMREGISTRERAD_INOM_PERIOD = ${reRegistered}
+  AND REGISTRERAD_INOM_PERIOD = ${registeredInPeriod}
+  AND PERIOD_I_ORDNING = ${periodInOrder}
+  `
 
-  log.debug('Got endDate ' + endDate + ' and ladokUID: ' + ladokRoundIdList.toString())
+  log.debug('Got endDate ' + endDate + ' and ladokUID: ' + ladokUIDList.toString())
 
-  for (let index = 0; index < ladokRoundIdList.length; index++) {
-    if (index === 0) {
-      formattedUID += " AND ( UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
-    } else {
-      formattedUID += " OR UTBILDNINGSTILLFALLE_UID = X'" + ladokRoundIdList[index].split('-').join('') + "'"
-    }
+  const { sqlWhereLadokUIDPart, params } = createWhereSQLAndMatchingParams(ladokUIDList)
+
+  const sql = sqlFirstPartQuery + sqlWhereLadokUIDPart
+
+  const queryOptions = {
+    sql,
+    params,
   }
-  return sqlFirstPartQuery + formattedUID + ')'
+
+  return queryOptions
 }
 
-async function requestRoundStatisticsByLadokId(req, res) {
+async function requestRoundStatisticsByLadokUID(req, res) {
   const endDate = req.params.roundEndDate
-  const ladokRoundIdList = req.body
+  const ladokUIDList = req.body
 
   if (endDate.length === 0) {
     log.debug('Empty roundEndDate: not OK')
     return res.status(406).json({ message: 'roundEndDate can not be empty' })
   }
-  if (ladokRoundIdList.length === 0) {
+  if (ladokUIDList.length === 0) {
     log.debug('Empty ladokUID list in body is okay though ladokUID can be missuíng in kopps, returning empty response ')
     return res.status(204).json({ registeredStudents: -1, examinationGrade: -1 })
   }
 
-  const queryString = createQueryString(endDate, ladokRoundIdList)
+  const queryString = createQueryOptions(endDate, ladokUIDList)
 
   try {
     const connectionString = `DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID=${process.env.LADOK3_USERNAME};PWD=${process.env.LADOK3_PASSWORD};PORT=${process.env.STUNNEL_PORT};PROTOCOL=TCPIP`
@@ -103,7 +136,7 @@ async function requestRoundStatisticsByLadokId(req, res) {
 }
 
 module.exports = {
-  requestRoundStatisticsByLadokId,
-  createQueryString,
+  requestRoundStatisticsByLadokId: requestRoundStatisticsByLadokUID,
+  createQueryOptions,
   createQueryCallback,
 }
