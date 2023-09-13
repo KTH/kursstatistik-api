@@ -1,4 +1,8 @@
-# Kursstatistik-api
+# Welcome to Kursstatistik-api 👋
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?cacheSeconds=2592000)
+![Prerequisite](https://img.shields.io/badge/node-16-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 Micro service for course statistics from _Ladok Uppföljningsdatabas_ using _[Stunnel](https://www.stunnel.org)_.
 
@@ -7,7 +11,7 @@ Micro service for course statistics from _Ladok Uppföljningsdatabas_ using _[St
 ### Stunnel
 
 #### Add or Change Certificate from Ladok
- 
+
 See document _Certifikat för uppföljningsdatabasen i kursstatistik-api_ in Confluence.
 
 ## Development Setup on macOS
@@ -20,7 +24,7 @@ After ordering a certificate from Ladok, you will receive an email with instruct
 
 ```sh
 # Extract private key from PFX file
-$ openssl pkcs12 -in [certificate file name].pfx -nocerts -out kursstatistik-api@KTH.pem -nodes
+$ openssl pkcs12 -in [certificate file name].pfx -nocerts -out kursstatistik-api@KTH.key -nodes
 
 # Set secure file permissions on private key file
 $ chmod 400 kursstatistik-api@KTH.pem
@@ -28,6 +32,18 @@ $ chmod 400 kursstatistik-api@KTH.pem
 # Extract client certificate from PFX file
 $ openssl pkcs12 -in [certificate file name].pfx -out kursstatistik-api@KTH.crt -clcerts -nokeys
 ```
+
+Afterwards, make sure to remove anything before the initial `-----BEGIN PRIVATE KEY-----` from the kursstatistik-api@KTH.key file before running the following commands.
+
+```sh
+# Convert private key to base64 and copy to clipboard
+$ cat kursstatistik-api@KTH.key | base64 | pbcopy
+
+# Convert client certificate to base64 and copy to clipboard
+$ cat kursstatistik-api@KTH.crt | base64 | pbcopy
+```
+
+Set the resulting strings as `LADOK3_CERT_KEY` and `LADOK3_CERT` respectively
 
 #### Install Stunnel
 
