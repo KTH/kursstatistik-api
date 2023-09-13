@@ -119,3 +119,7 @@ DATABASE=${process.env.LADOK3_DATABASE};HOSTNAME=${process.env.STUNNEL_HOST};UID
 ## Test
 
 Test data is available in document _KIP - Testdata - Förstagångsregistrerade och examinationsgrad.xlsx_.
+
+## Developing on a Macbook with M1 or M2 chip
+
+The `ibm_db` package does not run on newer macs with M1/M2 chipset. If you are using VSCode and want to develop/test locally, you can use the supplied devcontainer-configuration to start the project in a devcontainer.
