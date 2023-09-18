@@ -5,7 +5,7 @@ const fs = require('fs')
 const { exec } = require('child_process')
 
 const log = require('@kth/log')
-const monitorSystems = require('@kth/monitor')
+const { monitorRequest } = require('@kth/monitor')
 const { getPaths } = require('kth-node-express-routing')
 const version = require('../../config/version')
 const configServer = require('../configuration').server
@@ -110,19 +110,14 @@ async function getMonitor(req, res) {
   })
 
   try {
-    await monitorSystems(req, res, [
+    await monitorRequest(req, res, [
       {
-        key: 'local',
-        isResolved: true,
-        message: '- local system checks: OK',
-        statusCode: 200,
-      },
-      {
-        key: 'stunnel',
-        isResolved: stunnelStatus.statusCode === 200,
-        required: true, // if required
-        message: stunnelStatus.message,
-        statusCode: stunnelStatus.statusCode,
+        key: 'custom',
+        name: 'stunnel',
+        customCheck: {
+          isOk: stunnelStatus.statusCode === 200,
+          message: stunnelStatus.message,
+        },
       },
     ])
   } catch (error) {
