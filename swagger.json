@@ -36,8 +36,8 @@
     "/v1/courseRoundStaitics/{roundEndDate}": {
       "post": {
         "operationId": "requestRoundStatisticsByLadokId",
-        "summary": "Saves an object in the database",
-        "description": "Saves changes to an object in the database",
+        "summary": "Requests round statistics by Ladok ID",
+        "description": "",
         "parameters": [
           {
             "name": "roundEndDate",
@@ -58,7 +58,7 @@
         "tags": ["v1"],
         "responses": {
           "200": {
-            "description": "A successful save",
+            "description": "The requested round statistics",
             "schema": {
               "$ref": "#/definitions/ReturnObject"
             }
