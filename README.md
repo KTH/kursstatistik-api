@@ -123,3 +123,13 @@ Test data is available in document _KIP - Testdata - Förstagångsregistrerade
 ## Developing on a Macbook with M1 or M2 chip
 
 The `ibm_db` package does not run on newer macs with M1/M2 chipset. If you are using VSCode and want to develop/test locally, you can use the supplied devcontainer-configuration to start the project in a devcontainer.
+
+If you want to run the docker image, you have to replace line 1 in the [Dockerfile](./Dockerfile) with the following:
+
+```Docker
+# FROM ubuntu:latest # Replace this
+FROM --platform=linux/amd64 ubuntu:latest # with this
+```
+
+Make sure that only the `NODE_ENV: 'development'`
+Then run `docker-compose -f docker-compose.yml up`
