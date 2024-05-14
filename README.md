@@ -124,6 +124,8 @@ Test data is available in document _KIP - Testdata - Förstagångsregistrerade
 
 The `ibm_db` package does not run on newer macs with M1/M2 chipset. If you are using VSCode and want to develop/test locally, you can use the supplied devcontainer-configuration to start the project in a devcontainer.
 
+Tip: npm install (sometimes?) does not work in devcontainer because postinstall-script for ibm_db fails. A workaround is to ignore scripts: `npm install --ignore-scripts`
+
 If you want to run the docker image, you have to replace line 1 in the [Dockerfile](./Dockerfile) with the following:
 
 ```Docker
