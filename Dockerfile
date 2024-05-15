@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 # Create a new user (not root)    
 RUN addgroup --system kursstatistik && adduser --system --ingroup kursstatistik kursstatistikuser
 
