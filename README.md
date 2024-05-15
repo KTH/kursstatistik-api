@@ -108,6 +108,7 @@ LADOK3_USERNAME=xxxxx
 LADOK3_PASSWORD=xxxxx
 LADOK3_DATABASE=xxxxx
 STUNNEL_HOST=localhost
+STUNNEL_PORT=11000
 ```
 
 The connection string looks like this:
