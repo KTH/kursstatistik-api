@@ -30,7 +30,7 @@
     "ibm_db": "^3.2.3",
     "kth-node-access-log": "^0.2.9",
     "kth-node-api-key-strategy": "^2.0.3",
-    "kth-node-configuration": "^2.0.13",
+    "kth-node-configuration": "^2.1.0",
     "kth-node-express-routing": "^2.0.16",
     "kth-node-i18n": "^1.0.18",
     "passport": "^0.7.0",
