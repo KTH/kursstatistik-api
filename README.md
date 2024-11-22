@@ -130,8 +130,8 @@ Tip: npm install (sometimes?) does not work in devcontainer because postinstall-
 If you want to run the docker image, you have to replace line 1 in the [Dockerfile](./Dockerfile) with the following:
 
 ```Docker
-# FROM ubuntu:latest # Replace this
-FROM --platform=linux/amd64 ubuntu:latest # with this
+# FROM ubuntu:22.04 # Replace this
+FROM --platform=linux/amd64 ubuntu:22.04 # with this
 ```
 
 Make sure that only the `NODE_ENV: 'development'`
