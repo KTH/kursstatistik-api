@@ -19,11 +19,11 @@ RUN apt-get -y install python2 make gcc g++ python2.7 libxml2 openssl stunnel cu
 # Check OpenSSL version
 RUN openssl version -a
 
-#Curl and install nodejs 18
+# Curl and install Node.js 20
 RUN mkdir -p /etc/apt/keyrings
 RUN gpg --version
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN apt-get update
 RUN apt-get install -y nodejs
