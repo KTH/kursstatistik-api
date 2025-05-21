@@ -22,28 +22,32 @@ See document _Certifikat för uppföljningsdatabasen i kursstatistik-api_ in Con
 
 After ordering a certificate from Ladok, you will receive an email with instructions. Follow these instructions and download certficate (PFX file) and password files. The email might also include instructions on how to extract key and client certificate. Below is a modified set of instructions (based in [this post](http://sharepointoscar.com/2017-03-16-extract-key-from-pfx/)). The modification is necessary so that the password to the key can be removed later (this modification might not be necessary with an improved Stunnel configuration.) Extract key and certificate in a suitable folder.
 
+Here we assume that the certificate name we received is `kursstatistik-api@KTH.pfx`
+
 ```sh
 # Extract private key from PFX file
-$ openssl pkcs12 -in [certificate file name].pfx -nocerts -out kursstatistik-api@KTH.key -nodes
+$ openssl pkcs12 -in kursstatistik-api@KTH.pfx -nocerts -out kursstatistik-api@KTH.pem -nodes
 
 # Set secure file permissions on private key file
 $ chmod 400 kursstatistik-api@KTH.pem
 
 # Extract client certificate from PFX file
-$ openssl pkcs12 -in [certificate file name].pfx -out kursstatistik-api@KTH.crt -clcerts -nokeys
+$ openssl pkcs12 -in kursstatistik-api@KTH.pfx -out kursstatistik-api@KTH.crt -clcerts -nokeys
 ```
 
 Afterwards, make sure to remove anything before the initial `-----BEGIN PRIVATE KEY-----` from the kursstatistik-api@KTH.key file before running the following commands.
 
 ```sh
 # Convert private key to base64 and copy to clipboard
-$ cat kursstatistik-api@KTH.key | base64 | pbcopy
+$ cat kursstatistik-api@KTH.pem | base64 | pbcopy
 
 # Convert client certificate to base64 and copy to clipboard
 $ cat kursstatistik-api@KTH.crt | base64 | pbcopy
 ```
 
 Set the resulting strings as `LADOK3_CERT_KEY` and `LADOK3_CERT` respectively
+
+Remove all the certificate and password files from your machine
 
 #### Install Stunnel
 
@@ -55,7 +59,7 @@ $ brew install stunnel
 
 #### Configure Stunnel
 
-After ordering a certificate from Ladok, you will also receive an email with instructions on how to configure _Stunnel_. Below is a modified set of instructions and suggested configuration. A certificate chain file will also be attached to the email.
+After ordering a certificate from Ladok, you will also receive an email with instructions on how to configure _Stunnel_. Below is a modified set of instructions and suggested configuration. During the last couple of updates, we have not received an updated certificate chain file.
 
 You may, or may not, choose to use a _config_ folder. These instructions assume that all files are in `/usr/local/etc/stunnel`, simply called the _stunnel folder_,
 
@@ -66,10 +70,10 @@ You may, or may not, choose to use a _config_ folder. These instructions assume 
 ```sh
 debug = 7
 foreground = yes
-[db2_ufhsk_Prod]
+[db2_ufhsk_ENVIRONMENT]
 client = yes
 accept = localhost:11000
-connect = kth.ufhsk.ladok.se:2345
+connect = [url received in email from ladok]
 key = kursstatistik-api@KTH.pem
 verify = 2
 cert = kursstatistik-api@KTH.crt
@@ -109,6 +113,8 @@ LADOK3_PASSWORD=xxxxx
 LADOK3_DATABASE=xxxxx
 STUNNEL_HOST=localhost
 STUNNEL_PORT=11000
+STUNNEL_CONFIGURATION_NAME=db2_ufhsk_ENVIRONMENT
+STUNNEL_CONFIGURATION_CONNECT_URL=xxxxx
 ```
 
 The connection string looks like this:
@@ -127,6 +133,8 @@ The `ibm_db` package does not run on newer macs with M1/M2 chipset. If you are u
 
 Tip: npm install (sometimes?) does not work in devcontainer because postinstall-script for ibm_db fails. A workaround is to ignore scripts: `npm install --ignore-scripts`
 
+### Docker
+
 If you want to run the docker image, you have to replace line 1 in the [Dockerfile](./Dockerfile) with the following:
 
 ```Docker
@@ -134,5 +142,22 @@ If you want to run the docker image, you have to replace line 1 in the [Dockerfi
 FROM --platform=linux/amd64 ubuntu:22.04 # with this
 ```
 
-Make sure that only the `NODE_ENV: 'development'`
+Make sure that only the line `NODE_ENV: 'development'` is uncommented
 Then run `docker-compose -f docker-compose.yml up`
+
+Running the Docker we do not have to put any secrets into config/secrets and you do not have to configure stunnel locally.
+Make sure you have all the needed variables in your `.env`-file, then they are read everytime you run `docker-compose up`
+
+The needed variables seem to be:
+
+```
+LADOK3_CERT
+LADOK3_CERT_KEY
+LADOK3_USERNAME
+LADOK3_PASSWORD
+TUNNEL_CONFIGURATION_NAME
+TUNNEL_CONFIGURATION_CONNECT_URL
+LADOK3_DATABASE
+STUNNEL_HOST
+STUNNEL_PORT
+```
