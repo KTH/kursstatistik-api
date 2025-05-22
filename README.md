@@ -22,7 +22,8 @@ See document _Certifikat för uppföljningsdatabasen i kursstatistik-api_ in Con
 
 After ordering a certificate from Ladok, you will receive an email with instructions. Follow these instructions and download certficate (PFX file) and password files. The email might also include instructions on how to extract key and client certificate. Below is a modified set of instructions (based in [this post](http://sharepointoscar.com/2017-03-16-extract-key-from-pfx/)). The modification is necessary so that the password to the key can be removed later (this modification might not be necessary with an improved Stunnel configuration.) Extract key and certificate in a suitable folder.
 
-Here we assume that the certificate name we received is `kursstatistik-api@KTH.pfx`
+Here we assume that the certificate name we received is `kursstatistik-api@KTH.pfx`.
+If you get errors when running the below `openssl`-commands, it will probably be fixed by passing the flag `--legacy`
 
 ```sh
 # Extract private key from PFX file
@@ -35,7 +36,7 @@ $ chmod 400 kursstatistik-api@KTH.pem
 $ openssl pkcs12 -in kursstatistik-api@KTH.pfx -out kursstatistik-api@KTH.crt -clcerts -nokeys
 ```
 
-Afterwards, make sure to remove anything before the initial `-----BEGIN PRIVATE KEY-----` from the kursstatistik-api@KTH.key file before running the following commands.
+Afterwards, make sure to remove anything before the initial `-----BEGIN PRIVATE KEY-----` from the kursstatistik-api@KTH.pem file before running the following commands.
 
 ```sh
 # Convert private key to base64 and copy to clipboard
