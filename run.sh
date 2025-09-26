@@ -11,7 +11,7 @@ cp ./config/secrets/stunnel.conf.in ./config/secrets/stunnel.conf
 # Insert env-variables at predefined spots
 sed -i "s/STUNNEL_CONFIGURATION_NAME/${STUNNEL_CONFIGURATION_NAME}/g" ./config/secrets/stunnel.conf
 sed -i "s/STUNNEL_CONFIGURATION_CONNECT_URL/${STUNNEL_CONFIGURATION_CONNECT_URL}/g" ./config/secrets/stunnel.conf
-
+cat ./config/secrets/stunnel.conf
 stunnel ./config/secrets/stunnel.conf 2>&1 &
 
 exec $*
