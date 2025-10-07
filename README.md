@@ -156,9 +156,27 @@ LADOK3_CERT
 LADOK3_CERT_KEY
 LADOK3_USERNAME
 LADOK3_PASSWORD
-TUNNEL_CONFIGURATION_NAME
-TUNNEL_CONFIGURATION_CONNECT_URL
+STUNNEL_CONFIGURATION_NAME
+STUNNEL_CONFIGURATION_CONNECT_URL
 LADOK3_DATABASE
 STUNNEL_HOST
 STUNNEL_PORT
+CA_FILE
+KURSSTATISTIK_API_KEYS_0=?name=something&apiKey=<change_me_to_something_else>&scope=write&scope=read
+LOGGING_ACCESS_LOG=debug
 ```
+
+After adding all the neccessary variables, run the following: 
+- `npm run docker:build`
+- `npm run docker:run`
+
+A stunnel config file should have been created based on stunnel.conf.in.
+
+In Postman or Insomnium, test that the api is up and running by doing a `POST` request to:
+`http://localhost:3001/api/kursstatistik/v1/courseRoundStaitics/2022-06-30`
+
+Remmber to add `api_key` to headers and set its value to whatever you specified for "<change_me_to_something_else>" in the .env file
+
+
+
+
